@@ -34,12 +34,12 @@ int noFileLen(){
    int chosenSize;
    
    while(!looper){
-      cout << "Please enter the number of pocessis you will be adding: " << endl;
+      cout << "Please enter the number of processes you will be adding: " << endl;
       cin >> userInput;
       userInput = removeWhiteSpace(userInput);
 
       if(!readIsInt(userInput)){
-         cout << "Invalid you did not enter an integer or was negative" << endl;
+         cout << "Invalid! you did not enter an integer or was negative." << endl;
          continue;
       }
       chosenSize = stoi(userInput);
