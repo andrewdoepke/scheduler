@@ -21,8 +21,7 @@ void turnwait(int n);
 void display(int n);
 void ganttrr(int n);
 
-int main()
-{
+int main(){
   int i,n,ts,ch,j,x;
 
   p[0].tat=0;
@@ -37,23 +36,20 @@ int main()
  return 0;
 }
 
-int accept(int ch)
-{
+int accept(int ch){
   int i,n;
  
   printf("Enter the Total Number of Process: ");
   scanf("%d",&n);
   
- if(n==0)
-  {
+ if(n==0){
     printf("Invalid");
     exit(1);
   }
   
   cout<<endl;
   
-  for(i=1;i<=n;i++)
-  {
+  for(i=1;i<=n;i++){
     printf("Enter an Arrival Time of the Process P%d: ",i);
     scanf("%d",&p[i].at);
     p[i].id=i;
@@ -61,21 +57,18 @@ int accept(int ch)
 
  cout<<endl;
   
-  for(i=1;i<=n;i++)
-  {
+  for(i=1;i<=n;i++){
     printf("Enter a Burst Time of the Process P%d: ",i);
     scanf("%d",&p[i].bt);
   } 
  
-  for(i=1;i<=n;i++)
-   {
+  for(i=1;i<=n;i++){
     p1[i]=p[i];
- }
+  }
   return n;
 }
 
-void ganttrr(int n)
-{ 
+void ganttrr(int n){ 
   int i,ts,m,nextval,nextarr; 
  
   nextval=p1[1].at;
@@ -84,45 +77,32 @@ void ganttrr(int n)
   cout<<"\nEnter the Time Slice or Quantum: ";
   cin>>ts;
  
-  for(i=1;i<=n && p1[i].at<=nextval;i++)
-   {
+  for(i=1;i<=n && p1[i].at<=nextval;i++){
     q1.push(p1[i].id);
- }
+  }
  
-  while(!q1.empty()) 
-  { 
+  while(!q1.empty()) { 
     m=q1.front();
     q1.pop();
   
-    if(p1[m].bt>=ts)
-     {
+    if(p1[m].bt>=ts){
       nextval=nextval+ts;
-  } 
-    else
-     {
+    }else{
       nextval=nextval+p1[m].bt;
-    }   
-    if(p1[m].bt>=ts)
-     {
+    }if(p1[m].bt>=ts){
       p1[m].bt=p1[m].bt-ts;
-  } 
-    else
-     {
+   }else{
       p1[m].bt=0;
-  }   
+   }   
   
-    while(i<=n&&p1[i].at<=nextval)
-    {
+    while(i<=n&&p1[i].at<=nextval){
       q1.push(p1[i].id);
       i++;
     }
   
-    if(p1[m].bt>0)
-     {
+    if(p1[m].bt>0){
       q1.push(m);
-  }
-    if(p1[m].bt<=0)
-     {
+    } if(p1[m].bt<=0){
       p[m].ft=nextval;
      }   
   }

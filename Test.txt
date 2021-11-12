@@ -1,1 +1,2 @@
 This is working.
+cd Desktop/'Parallels Shared Folders'/LinuxSchedueler

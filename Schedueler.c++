@@ -3,7 +3,17 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <queue>
 using namespace std;
+
+struct SchedData{
+   int P_ID;
+   int Burst;
+   int Arrival;
+   int Priority;
+   int Deadline;
+   int IO;
+};
 
 bool readIsInt(string input){
    for(int i = 0; i < input.length(); i++){
@@ -50,9 +60,10 @@ int noFileLen(){
    return chosenSize;
 }
 
-void noFileData(int *schedualerDataPtr, int chosenSize){
+void noFileData(SchedData *schedualerDataPtr, int chosenSize){
    string userInput;
    string typeOfIn;
+   int tempArr[6];
    bool looper = false;
    int i = 0;
    
@@ -91,15 +102,23 @@ void noFileData(int *schedualerDataPtr, int chosenSize){
          continue;
       }
 
-      schedualerDataPtr[y] = stoi(userInput);
+      tempArr[i] = stoi(userInput);
+
       i++;
-      if(i == 6)
+      if(i == 6){
+         schedualerDataPtr[y/6].P_ID = tempArr[0];
+         schedualerDataPtr[y/6].Burst = tempArr[1];
+         schedualerDataPtr[y/6].Arrival = tempArr[2];
+         schedualerDataPtr[y/6].Priority = tempArr[3];
+         schedualerDataPtr[y/6].Deadline = tempArr[4];
+         schedualerDataPtr[y/6].IO = tempArr[5];
          i = 0;
+      }
       y++;
    }
 }
 
-void fileData(int *schedualerDataPtr, string fileName){
+void fileData(SchedData *schedualerDataPtr, string fileName){
    bool isFirstLine = true;
    int i = 0;
    fstream ifile;
@@ -115,19 +134,40 @@ void fileData(int *schedualerDataPtr, string fileName){
       }
 
       stringstream stream(unused);
+      int y = 0;
       int n;
       while(stream >> n){
          //cout << "read numbers: " << n << endl << endl; 
-         schedualerDataPtr[i] = n;
          //cout << "schedualerDataPtr: " << schedualerDataPtr[i] << endl << endl; 
-         i++;
+         switch(y){
+            case 0:
+               schedualerDataPtr[i].P_ID = n;
+               break;
+            case 1:
+               schedualerDataPtr[i].Burst = n;
+               break;
+            case 2:
+               schedualerDataPtr[i].Arrival = n;
+               break;
+            case 3:
+               schedualerDataPtr[i].Priority = n;
+               break;
+            case 4:
+               schedualerDataPtr[i].Deadline = n;
+               break;
+            default:
+               schedualerDataPtr[i].IO = n;
+               break;
+         }
+         y++;
       }
+      i++;
    }
    ifile.close();
 }
 
 int main() {
-   int *schedualerDataPtr;
+   SchedData *schedualerDataPtr;
    int schedualerSize = -1;
    bool isFile = false;
    fstream ifile;
@@ -169,7 +209,7 @@ int main() {
    ifile.close();
    }
 
-   schedualerDataPtr = (int*) malloc((sizeof(int) * (schedualerSize) * 6));
+   schedualerDataPtr = (SchedData*) malloc((sizeof(SchedData) * (schedualerSize)));
 
    if(inputStr == "yes"){
       noFileData(schedualerDataPtr, schedualerSize);
@@ -179,8 +219,8 @@ int main() {
    
    //cout << inputStr << endl;
 
-   for(int i = 0; i < (schedualerSize*6); i++)
-      cout << "schedualerDataPtr Main:" << schedualerDataPtr[i] << endl;
+   for(int i = 0; i < (schedualerSize); i++)
+      cout << "schedualerDataPtr Main: " << schedualerDataPtr[i].P_ID << " " << schedualerDataPtr[i].Burst << " " << schedualerDataPtr[i].Arrival << " " << schedualerDataPtr[i].Priority << " " << schedualerDataPtr[i].Deadline << " " << schedualerDataPtr[i].IO <<  endl;
 
    free(schedualerDataPtr);
 
