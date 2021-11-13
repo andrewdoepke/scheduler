@@ -1,19 +1,12 @@
+#include <sched.cpp>
 #include <iostream>
 #include <algorithm>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <queue>
+#include <MFQS.cpp>
 using namespace std;
-
-struct SchedData{
-   int P_ID;
-   int Burst;
-   int Arrival;
-   int Priority;
-   int Deadline;
-   int IO;
-};
 
 bool readIsInt(string input){
    for(int i = 0; i < input.length(); i++){
@@ -44,12 +37,12 @@ int noFileLen(){
    int chosenSize;
    
    while(!looper){
-      cout << "Please enter the number of pocessis you will be adding: " << endl;
+      cout << "Please enter the number of processes you will be adding: " << endl;
       cin >> userInput;
       userInput = removeWhiteSpace(userInput);
 
       if(!readIsInt(userInput)){
-         cout << "Invalid you did not enter an integer or was negative" << endl;
+         cout << "Invalid! you did not enter an integer or was negative." << endl;
          continue;
       }
       chosenSize = stoi(userInput);
