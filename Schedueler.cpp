@@ -1,19 +1,12 @@
+#include <sched.cpp>
 #include <iostream>
 #include <algorithm>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <queue>
+#include <MFQS.cpp>
 using namespace std;
-
-struct SchedData{
-   int P_ID;
-   int Burst;
-   int Arrival;
-   int Priority;
-   int Deadline;
-   int IO;
-};
 
 bool readIsInt(string input){
    for(int i = 0; i < input.length(); i++){
