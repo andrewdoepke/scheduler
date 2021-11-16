@@ -212,6 +212,26 @@ int main() {
    
    //cout << inputStr << endl;
 
+   cout << "Would you like to run MFQS or RTS? 1 for MFQS, 2 for RTS, anything else to exit.";
+   getline(cin, inputStr);
+   int choice = 0;
+   if(readIsInt(inputStr)){
+      choice = stoi(inputStr);
+   }
+
+   switch(choice){
+      case 1:
+         //run mfqs
+         break;
+      case 2:
+         //run rts
+         break;
+      default:
+         return; //quit program
+         break;
+   }
+   
+
    for(int i = 0; i < (schedualerSize); i++)
       cout << "schedualerDataPtr Main: " << schedualerDataPtr[i].P_ID << " " << schedualerDataPtr[i].Burst << " " << schedualerDataPtr[i].Arrival << " " << schedualerDataPtr[i].Priority << " " << schedualerDataPtr[i].Deadline << " " << schedualerDataPtr[i].IO <<  endl;
 
