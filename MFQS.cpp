@@ -10,12 +10,7 @@
 typedef std::vector<queue<SchedData>> QueueArr; //Define Queue Array (dynamically allocating)
 
 //Base time quantum
-const int q0t = 4; //ms
-
-//Return time quantum for a given queue. Q0 starts at q0t ms and doubles for each next queue
-int qTime(int qNum) {
-    return q0t * (qNum + 1);
-}
+const int q0t = 4; //ms or something
 
 void mfqs(SchedData* ps, int pssize) {
     //read user input for num of queues
@@ -40,10 +35,14 @@ void mfqs(SchedData* ps, int pssize) {
     //create queues
     QueueArr queues(qnum); 
 
-    //Start feeding the processes into the queues. This might not be what we need to do
-    for(int i = 0; i < pssize; i++) {
-        //feed into q0
-        queues[0].push(ps[i]); //Adds current process to q0
+    bool done = false;
+    int time = 0;
+
+    while(!done){ //each iteration is a tick
+
+        ++time;//increment 
     }
+
+    
 
 }
