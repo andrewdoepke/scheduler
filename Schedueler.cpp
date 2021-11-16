@@ -160,8 +160,8 @@ void fileData(SchedData *schedualerDataPtr, string fileName){
 }
 
 int main() {
-   SchedData *schedualerDataPtr;
-   int schedualerSize = -1;
+   SchedData *schedDataPtr;
+   int schedSize = -1;
    bool isFile = false;
    fstream ifile;
    string fileName;
@@ -178,7 +178,7 @@ int main() {
    }
    
    if(inputStr == "yes"){
-      schedualerSize = noFileLen();
+      schedSize = noFileLen();
    }else{
       while(!isFile){
       cout << "Please enter your file name:" << endl;
@@ -196,19 +196,22 @@ int main() {
 
       std::string unused;
       while (std::getline(ifile, unused)){
-         ++schedualerSize;
+         ++schedSize;
       }
 
    ifile.close();
    }
 
-   schedualerDataPtr = (SchedData*) malloc((sizeof(SchedData) * (schedualerSize)));
+   schedDataPtr = (SchedData*) malloc((sizeof(SchedData) * (schedSize)));
 
    if(inputStr == "yes"){
-      noFileData(schedualerDataPtr, schedualerSize);
+      noFileData(schedDataPtr, schedSize);
    }else{
-      fileData(schedualerDataPtr, fileName);
+      fileData(schedDataPtr, fileName);
    }
+
+   //sort our processes by arrival time
+   sortByArr(schedDataPtr, schedSize);
    
    //cout << inputStr << endl;
 
@@ -222,6 +225,7 @@ int main() {
    switch(choice){
       case 1:
          //run mfqs
+         mfqs(schedDataPtr, schedSize);
          break;
       case 2:
          //run rts
@@ -231,11 +235,11 @@ int main() {
          break;
    }
    
-
+/*
    for(int i = 0; i < (schedualerSize); i++)
       cout << "schedualerDataPtr Main: " << schedualerDataPtr[i].P_ID << " " << schedualerDataPtr[i].Burst << " " << schedualerDataPtr[i].Arrival << " " << schedualerDataPtr[i].Priority << " " << schedualerDataPtr[i].Deadline << " " << schedualerDataPtr[i].IO <<  endl;
-
-   free(schedualerDataPtr);
+*/
+   free(schedDataPtr);
 
    return 0;
 }

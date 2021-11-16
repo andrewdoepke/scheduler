@@ -14,3 +14,19 @@ bool readIsInt(string input){
    }
    return true;
 }
+
+//Bubble sort implementation to sort the processes by arrival time.
+void sortByArr(SchedData* data, int size) {
+   int i, j;
+   struct SchedData t;
+
+   for(i = 0; i < size - 1; i++){
+      for(j = 0; j < (size - 1 - i); j++){
+         if(data[j].Arrival < data[j+1].Arrival){
+            t = data[j];
+            data[j] = data[j + 1];
+            data[j+1] = t;
+         }
+      }
+   }
+}

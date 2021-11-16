@@ -19,7 +19,7 @@ int qTime(int qNum) {
 
 void mfqs(SchedData* ps, int pssize) {
     //read user input for num of queues
-    cout << "How many queues would you like for MFQS?";
+    cout << "How many queues would you like for MFQS? You can have a maximum of 5";
     string inp = "";
     getline(cin, inp);
 
@@ -31,6 +31,11 @@ void mfqs(SchedData* ps, int pssize) {
         cout << "Invalid number of queues! Exiting...";
         return;
     } //Otherwise...
+
+    if(qnum > 5 || qnum < 1) {
+        cout << "Cannot have %d queues.", qnum;
+        return;
+    }
 
     //create queues
     QueueArr queues(qnum); 
