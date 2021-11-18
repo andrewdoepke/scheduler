@@ -69,6 +69,7 @@ que RR(que *queue, int quant) {
 
     que q = *queue;
     que ret; //leftovers to pass to the next queue instead of run here
+    //que readyQ;
     
     int time = 0; //time counter
 
@@ -100,8 +101,16 @@ que RR(que *queue, int quant) {
             q.erase(q.begin()); //pop
 
             //DO CALCULATIONS
+            //t.BurstCalc++;
+            if(t.BurstCalc == t.Burst){
+                t.WaitTime = t.Arival - 
 
+                q.erase();
+            }else{
+                if((t.Bust - t.BurstCalc) > quant){
 
+                }
+            }
             
 
             //if it takes too long, we will demote it
@@ -109,7 +118,7 @@ que RR(que *queue, int quant) {
                 ret.push_back(t);
             }
         }
-
+        t.BurstCalc++;
         ++time;//increment time clock
     }
 

@@ -5,6 +5,8 @@ struct SchedData{
    int Priority;
    int Deadline;
    int IO;
+   int BurstCalc = 0;
+   float WaitTime,tat;
 };
 
 typedef std::vector<SchedData> que; //a queue is a vector of SchedData items
