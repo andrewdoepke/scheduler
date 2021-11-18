@@ -81,7 +81,7 @@ que RR(que *queue, int quant) {
         if(q[0].Arrival == time){ //process has arrived
 
             if(q[1].Arrival == time){ //handle duplicate arrival times
-                while(q[currInd++].Arrival == time) //find last index of duplicate arrival. This should increment currInd
+                while(q[currInd++].Arrival == time); //find last index of duplicate arrival. This should increment currInd
 
                 for(int i = 0; i < currInd; i++){ //swap by priority in this subset we found
                     for(int j = 0; j < (currInd - 1 - i); j++){
