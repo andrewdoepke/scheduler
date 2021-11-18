@@ -103,7 +103,8 @@ que RR(que *queue, int quant) {
             //DO CALCULATIONS
             //t.BurstCalc++;
             if(t.BurstCalc == t.Burst){
-                t.WaitTime = t.Arival - 
+                //t.WaitTime = t.Arival - 
+
 
                 q.erase();
             }else{
