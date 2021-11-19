@@ -6,7 +6,10 @@
 #include <sstream>
 #include <queue>
 
-void mfqs(SchedData* ps, int pssize) {
+que eventTracker; //que to hold all events for use in gantt chart. Stores in order each completion or partial completion.
+//We most likely want to reference P_ID and burst_calc for our gantt chart
+
+que mfqs(SchedData* ps, int pssize) {
     
     //read user input for num of queues
     cout << "How many queues would you like for MFQS? You can have a maximum of 5";
@@ -60,23 +63,22 @@ void mfqs(SchedData* ps, int pssize) {
     //fcfs(&queues[qnum-1]); //call fcfs for final queue
 
     //we're done now. Return some information
-
-    
-
+    return eventTracker;
 }
 
 que RR(que *queue, int quant) {
 
     que q = *queue;
     que ret; //leftovers to pass to the next queue instead of run here
-    //que readyQ;
+    que readyQ;
+    bool runningP = false;
     
     int time = 0; //time counter
 
     int currInd = 0; //Will usually be 0 since these are queues
     SchedData t;
 
-    while(q.size() > 0){ //each iteration is a tick. while queue is not empty, do the things
+    while(q.size() > 0 || readyQ.size() > 0){ //each iteration is a tick. while either queue is not empty, do the things
 
         if(q[0].Arrival == time){ //process has arrived
 
@@ -94,35 +96,64 @@ que RR(que *queue, int quant) {
                 }
                 currInd = 0; //reset current index
             } //end handling duplicate arrivals
-            //keep going with this
 
-            //Run the current process! 
-            t = q[0]; //peek
-            q.erase(q.begin()); //pop
-
-            //DO CALCULATIONS
-            //t.BurstCalc++;
-            if(t.BurstCalc == t.Burst){
-                //t.WaitTime = t.Arival - 
-
-
-                q.erase();
-            }else{
-                if((t.Bust - t.BurstCalc) > quant){
-
-                }
-            }
+            //do validity checks on process here, before pushing
             
+            //Queue process for running
+            readyQ.push_back(q[0]); //peek
+            q.erase(q.begin()); //pop
+        }
+        //keep going with this
+
+        if(!runningP && !readyQ.empty()){ //no process is running and there is something to be ran, so load it into current process
+            t = readyQ[0];
+            readyQ.erase(readyQ.begin());
+            runningP = true;
+        } else if(runningP) {//process is running so do checks for that
+            t.BurstCalc++; //burst a tick
+
+            if(t.BurstCalc == t.Burst){ //finished process
+                t.completion = time; //save completion time
+                t.tat = t.completion - t.Arrival; //turn around time
+                t.WaitTime = t.tat - t.Burst; //wait time
+                runningP = false;
+
+                eventTracker.push_back(t); //on completion, save data for this run
+            }else{ //incomplete
+                if(t.BurstCalc > quant){ //process has went over quantum, demote...
+
+                    eventTracker.push_back(t); //push back partial data for this process 
+
+                    t.Burst -= t.BurstCalc; //save state of process. New burst is the burst minus what has already been done
+                    t.BurstCalc = 0; //reset burst count for use in another queue
+                    t.WaitTime = 0; //reset wait time as this is going to a new queue
+
+                    ret.push_back(t); //return this process for next queue
+                    runningP = false; //clear running status
+                } //else.. Hasn't gone over yet! Keep running...
+            }
+
+            for(int j = 0; j < readyQ.size(); j++){ //increment all wait times in ready queue
+                readyQ[j].WaitTime++;
+            }
+<<<<<<< HEAD
+
 
             //if it takes too long, we will demote it
             if(false){ //**ADD CALCULATIONS IN TEST**
                 ret.push_back(t);
             }
         }
+        
         t.BurstCalc++;
-        ++time;//increment time clock
-    }
+=======
+            
+        }// end running calculations
 
+>>>>>>> dcc580b202c3f9b09b52d6290f8ede39560a67da
+        ++time;//increment time clock
+
+    }//end time counter
     return ret;
 }
 
