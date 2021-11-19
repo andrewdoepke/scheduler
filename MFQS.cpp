@@ -136,7 +136,6 @@ que RR(que *queue, int quant) {
             for(int j = 0; j < readyQ.size(); j++){ //increment all wait times in ready queue
                 readyQ[j].WaitTime++;
             }
-<<<<<<< HEAD
 
 
             //if it takes too long, we will demote it
@@ -146,11 +145,9 @@ que RR(que *queue, int quant) {
         }
         
         t.BurstCalc++;
-=======
             
         }// end running calculations
 
->>>>>>> dcc580b202c3f9b09b52d6290f8ede39560a67da
         ++time;//increment time clock
 
     }//end time counter
