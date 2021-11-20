@@ -9,6 +9,8 @@
 que eventTracker; //que to hold all events for use in gantt chart. Stores in order each completion or partial completion.
 //We most likely want to reference P_ID and burst_calc for our gantt chart
 
+int time = 0; //global time variable
+
 que mfqs(SchedData* ps, int pssize) {
     
     //read user input for num of queues
@@ -47,33 +49,140 @@ que mfqs(SchedData* ps, int pssize) {
         cout << "Cannot use a number < 1. Exiting...";
         return;
     } //next...
+	
+	//Prompt for aging time
+    cout << "How long should the processes in the last queue age for?";
+    getline(cin, inp);
+
+    //Parse our input
+    int agelim = 0; //time quantum
+    if(readIsInt(inp)){//parse the int
+        agelim = stoi(inp);
+    } else {//invalid, so exit
+        cout << "That's not a valid integer! Exiting...";
+        return;
+    } 
+
+    if(agelim < 1){ 
+        cout << "Cannot use a number < 1. Exiting...";
+        return;
+    } //next...
 
     //create queues
     QueueArr queues(qnum); 
-
+	
+	/*
     for(int i = 0; i < pssize; i++){ //copy array over into first queue
         queues[0].push_back(ps[i]); 
     }
-
+	
     for(int i = 0; i < qnum - 1; i++){ //handle the RR queues
         queues[i+1] = RR(&queues[i], quant); //pass the pointer of our current RR queue, return the expired processes
         quant *= 2; //double our quantum
     }
 
     //fcfs(&queues[qnum-1]); //call fcfs for final queue
+	*/
+	
+	int currPInd = 0;
+	int currInd, i, j, curr;
+	SchedData t;
+	int currQ = 0;
+	int currQuant = quant;
+	
+	bool runningP = false; //store if process is currently running
+	
+	while(currPInd < pssize || runningP){
+		if(ps[currPInd].Arrival == time){ //hit a process
+		
+			//handle duplicate arrivals
+			if(ps[currPInd + 1].Arrival == time){ //if there is a duplicate, find duplicates and sort by priority
+				currInd = currPInd;
+				while(ps[currInd++].Arrival == time); //find last index of duplicate arrival. This should increment currInd
+				
+				for(i = currPInd; i < currInd - 1; i++){
+					for(j = currPInd; j < (currInd - 1 - i); j++){
+						if(ps[j].Priority < ps[j+1].Priority){
+							t = ps[j];
+							ps[j] = ps[j+1];
+							ps[j+1] = t;
+						}
+					}
+				}
+			}// end duplicate check. 
+			
+			
+			queues[0].push_back(ps[currPInd]); //queue it
+			currPInd++; //increment
+		}//process is now queued..
+		
+		if(!runningP){ //queue next process if nothing is running
+			currQuant = quant;
+			for(i = 0; i < qnum; i++){ //pull from highest queue
+				if(queues[i].size() > 0){
+					t = queues[i][0]; //set t as current running process
+					queues[i].erase(queues[i].begin()); //pop from queue
+					runningP = true;
+					currQ = i;
+					currQuant *= 2;
+					
+					break; //break out of for loop
+				}
+			}//exit for loop.
+		}
+		
+		for(i = 0; i < qnum; i++){ //increment wait times and promote things if needed. Promotions handled before demotions
+			if(queues[i].size() > 0){ //if queue is not empty, increment wait times and promote/demote as necessary
+				for(j = 0; j < queues[i].size(); j++) {
+					queues[i][j].WaitTime++;
+					
+					if(i == qnum - 1 && queues[i][j].WaitTime >= agelim){ //promote? Check if things is in the last queue and if they are promotable
+						queues[i - 1].push_back(queues[i][j]); //promote to above queue
+						queues[i].erase(queues[i].begin() + j); //get rid of it from previous queue
+					}
+				}
+			}
+		}
+		
+		if(runningP) { //something is running
+			t.BurstCalc++; //burst a tick
+			
+			if(t.burstTime == t.Burst){ //t has finished running!
+				t.completion = time; //save completion time
+                t.tat = t.completion - t.Arrival; //turn around time
+                //t.WaitTime = t.tat - t.Burst; //wait time.. we found this manually
+                runningP = false;
 
+                eventTracker.push_back(t); //on completion, save data for this run
+			} else {
+				//has not finished running :(
+
+				if(currQ != qnum - 1){ //RR Queues demote?
+					if(t.BurstCalc > currQuant){ //process has went over quantum, demote... 
+						queues[currQ + 1].push_back(t);
+						runningP = false;
+					} //else.. Hasn't gone over yet! Keep running...
+				}
+			} //keep going
+			
+		} //end running calculations
+			
+		time++; //increment time
+	}
+	
     //we're done now. Return some information
     return eventTracker;
 }
 
-que RR(que *queue, int quant) {
+/*
+que RR(QueueArr *queues, int qCurr, int quant) {
 
-    que q = *queue;
+    que q = *queues[qCurr];
     que ret; //leftovers to pass to the next queue instead of run here
     que readyQ;
     bool runningP = false;
     
-    int time = 0; //time counter
+    //int time = 0; //time counter 
 
     int currInd = 0; //Will usually be 0 since these are queues
     SchedData t;
@@ -109,7 +218,7 @@ que RR(que *queue, int quant) {
             t = readyQ[0];
             readyQ.erase(readyQ.begin());
             runningP = true;
-        } else if(runningP) {//process is running so do checks for that
+        } else if(runningP) { //process is running so do checks for that
             t.BurstCalc++; //burst a tick
 
             if(t.BurstCalc == t.Burst){ //finished process
@@ -137,11 +246,6 @@ que RR(que *queue, int quant) {
                 readyQ[j].WaitTime++;
             }
 
-
-            //if it takes too long, we will demote it
-            if(false){ //**ADD CALCULATIONS IN TEST**
-                ret.push_back(t);
-            }
         }
         
         t.BurstCalc++;
@@ -154,7 +258,6 @@ que RR(que *queue, int quant) {
     return ret;
 }
 
-/*
 void fcfs(que* queue){
 
 }   
