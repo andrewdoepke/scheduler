@@ -1,15 +1,27 @@
 {
     "configurations": [
         {
+<<<<<<< Updated upstream
             "name": "Linux",
+=======
+            "name": "Mac",
+>>>>>>> Stashed changes
             "includePath": [
                 "${workspaceFolder}/**"
             ],
             "defines": [],
+<<<<<<< Updated upstream
             "compilerPath": "/usr/bin/g++",
             "cStandard": "gnu17",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "linux-gcc-x64"
+=======
+            "macFrameworkPath": [],
+            "compilerPath": "/usr/local/bin/gcc",
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "macos-gcc-x64"
+>>>>>>> Stashed changes
         }
     ],
     "version": 4
