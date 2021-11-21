@@ -28,7 +28,7 @@ que mfqs(SchedData* ps, int pssize) {
     } //Otherwise...
 
     if(qnum > 5 || qnum < 2) {
-        cout << ("Cannot have %d queues for MFQS. Exiting...", qnum);
+        cout << "Cannot have " & qnum & " queues for MFQS. Exiting...";
         return;
     }
 
@@ -94,7 +94,9 @@ que mfqs(SchedData* ps, int pssize) {
 	
 	que IO;
 	
-	while(currPInd < pssize || runningP){
+	bool done = false;
+	
+	while(!done){
 		if(ps[currPInd].Arrival == time){ //hit a process
 		
 			//handle duplicate arrivals
@@ -154,8 +156,19 @@ que mfqs(SchedData* ps, int pssize) {
                 t.tat = t.completion - t.Arrival; //turn around time
                 //t.WaitTime = t.tat - t.Burst; //wait time.. we found this manually
                 runningP = false;
+				
+				cout << "Finished process " &  t.PID;
 
                 eventTracker.push_back(t); //on completion, save data for this run
+				
+				if(queues[0].size() > 0){ //do we end?
+					done = true;
+					for(que a : queues){
+						if(a.size() > 0){
+							done = false;
+						}
+					}
+				}
 			} else {
 				//has not finished running :(
 				
