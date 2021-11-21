@@ -92,6 +92,8 @@ que mfqs(SchedData* ps, int pssize) {
 	
 	bool runningP = false; //store if process is currently running
 	
+	que IO;
+	
 	while(currPInd < pssize || runningP){
 		if(ps[currPInd].Arrival == time){ //hit a process
 		
@@ -156,8 +158,12 @@ que mfqs(SchedData* ps, int pssize) {
                 eventTracker.push_back(t); //on completion, save data for this run
 			} else {
 				//has not finished running :(
-
-				if(currQ != qnum - 1){ //RR Queues demote?
+				
+				if(t.burstTime == t.Burst - 1){ //I/O at tick before the process ends
+					//queue in the top to finish process
+					queues[0].push_back(t);//add to end of first queue
+					
+				} else if(currQ != qnum - 1){ //RR Queues demote?
 					if(t.BurstCalc > currQuant){ //process has went over quantum, demote... 
 						queues[currQ + 1].push_back(t);
 						runningP = false;
@@ -173,6 +179,10 @@ que mfqs(SchedData* ps, int pssize) {
     //we're done now. Return some information
     return eventTracker;
 }
+
+
+
+/*-----------------------------------------------------*/
 
 /*
 que RR(QueueArr *queues, int qCurr, int quant) {
