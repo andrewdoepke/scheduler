@@ -6,12 +6,13 @@
 #include <sstream>
 #include <queue>
 
-que eventTracker; //que to hold all events for use in gantt chart. Stores in order each completion or partial completion.
 //We most likely want to reference P_ID and burst_calc for our gantt chart
 
 int tTime = 0; //global tTime variable
 
 que mfqs(SchedData* ps, int pssize) {
+    
+    que eventTracker; //que to hold all events for use in gantt chart. Stores in order each completion or partial completion.
     
     //read user input for num of queues
     std::cout << "How many queues would you like for MFQS? You can have a maximum of 5";
