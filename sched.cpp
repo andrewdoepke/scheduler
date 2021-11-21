@@ -1,5 +1,6 @@
 #include <vector>
 #include <string>
+#include "sched.h"
 
 struct SchedData{
    int P_ID;

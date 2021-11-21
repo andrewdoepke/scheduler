@@ -1,12 +1,13 @@
-#include "sched.cpp"
+//#include "sched.h"
 #include <iostream>
 #include <algorithm>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <queue>
-#include "MFQS.cpp"
-#include "RTS.cpp"
+#include "All.h"
+//#include "MFQS.h"
+//#include "RTS.h"
 using namespace std;
 
 
@@ -210,8 +211,8 @@ int main() {
    
    //std::cout << inputStr << endl;
 
-   std::cout << "Would you like to run MFQS or RTS? 1 for MFQS, 2 for RTS, anything else to exit.";
-   getline(cin, inputStr);
+   cout << "Would you like to run MFQS or RTS? 1 for MFQS, 2 for RTS, anything else to exit." << endl;
+   cin >> inputStr;
    int choice = 0;
    if(readIsInt(inputStr)){
       choice = stoi(inputStr);
