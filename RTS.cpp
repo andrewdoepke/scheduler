@@ -6,9 +6,6 @@
 #include <queue>
 #include <sched.cpp>
 
-//que eventTracker; //que to hold all events for use in gantt chart. Stores in order each completion or partial completion.
-//We most likely want to reference P_ID and burst_calc for our gantt chart
-
 void rts(SchedData* ps, int pssize) {
     struct SchedData t;
     string userIn;
