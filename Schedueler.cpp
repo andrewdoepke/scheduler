@@ -6,6 +6,7 @@
 #include <sstream>
 #include <queue>
 #include <MFQS.cpp>
+#include <RTS.cpp>
 using namespace std;
 
 bool readIsInt(string input){
@@ -105,6 +106,7 @@ void noFileData(SchedData *schedualerDataPtr, int chosenSize){
          schedualerDataPtr[y/6].Priority = tempArr[3];
          schedualerDataPtr[y/6].Deadline = tempArr[4];
          schedualerDataPtr[y/6].IO = tempArr[5];
+         schedualerDataPtr[y/6].SlackTime = tempArr[4] - (tempArr[1] +tempArr[2]);
          i = 0;
       }
       y++;
@@ -150,6 +152,7 @@ void fileData(SchedData *schedualerDataPtr, string fileName){
                break;
             default:
                schedualerDataPtr[i].IO = n;
+               schedualerDataPtr[i].SlackTime + schedualerDataPtr[i].Deadline - schedualerDataPtr[i].Burst - schedualerDataPtr[i].Arrival;
                break;
          }
          y++;
@@ -229,6 +232,7 @@ int main() {
          break;
       case 2:
          //run rts
+         rts(schedDataPtr, schedSize);
          break;
       default:
          return; //quit program

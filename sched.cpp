@@ -9,6 +9,7 @@ struct SchedData{
    float WaitTime = 0;
    float tat;
    int completion = 0;//false if 0
+   int SlackTime;
 };
 
 typedef std::vector<SchedData> que; //a queue is a vector of SchedData items
