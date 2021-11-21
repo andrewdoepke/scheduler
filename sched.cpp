@@ -1,3 +1,6 @@
+#include <vector>
+#include <string>
+
 struct SchedData{
    int P_ID;
    int Burst;
@@ -15,7 +18,7 @@ struct SchedData{
 typedef std::vector<SchedData> que; //a queue is a vector of SchedData items
 typedef std::vector<que> QueueArr; //Define Queue Array (dynamically allocating)
 
-bool readIsInt(string input){
+bool readIsInt(std::string input){
    for(int i = 0; i < input.length(); i++){
       if(isdigit(input[i]) == false)
          return false;

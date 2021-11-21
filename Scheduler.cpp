@@ -1,21 +1,13 @@
-#include <sched.cpp>
+#include "sched.cpp"
 #include <iostream>
 #include <algorithm>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <queue>
-#include <MFQS.cpp>
-#include <RTS.cpp>
+#include "MFQS.cpp"
+#include "RTS.cpp"
 using namespace std;
-
-bool readIsInt(string input){
-   for(int i = 0; i < input.length(); i++){
-      if(isdigit(input[i]) == false)
-         return false;
-   }
-   return true;
-}
 
 
 string removeWhiteSpace(string clearing){
@@ -38,12 +30,12 @@ int noFileLen(){
    int chosenSize;
    
    while(!looper){
-      cout << "Please enter the number of processes you will be adding: " << endl;
+      std::cout << "Please enter the number of processes you will be adding: " << endl;
       cin >> userInput;
       userInput = removeWhiteSpace(userInput);
 
       if(!readIsInt(userInput)){
-         cout << "Invalid! you did not enter an integer or was negative." << endl;
+         std::cout << "Invalid! you did not enter an integer or was negative." << endl;
          continue;
       }
       chosenSize = stoi(userInput);
@@ -61,7 +53,7 @@ void noFileData(SchedData *schedualerDataPtr, int chosenSize){
    bool looper = false;
    int i = 0;
    
-   cout << "Please enter enter integers in the form P_ID, Burst, Arrival, Priority, Deadline, I/O." << endl <<
+   std::cout << "Please enter enter integers in the form P_ID, Burst, Arrival, Priority, Deadline, I/O." << endl <<
          "When you enter a character you will be asked to finish the sequence and the you will be kicked." << endl;
 
    for(int y = 0; y < (6 * chosenSize);){
@@ -87,12 +79,12 @@ void noFileData(SchedData *schedualerDataPtr, int chosenSize){
             break;
       }
 
-      cout << "Please enter your " << typeOfIn << ": " << endl; 
+      std::cout << "Please enter your " << typeOfIn << ": " << endl; 
       cin >> userInput;
       userInput = removeWhiteSpace(userInput);
 
       if(!readIsInt(userInput)){
-         cout << "Invalid you did not enter an integer" << endl;
+         std::cout << "Invalid you did not enter an integer" << endl;
          continue;
       }
 
@@ -132,8 +124,8 @@ void fileData(SchedData *schedualerDataPtr, string fileName){
       int y = 0;
       int n;
       while(stream >> n){
-         //cout << "read numbers: " << n << endl << endl; 
-         //cout << "schedualerDataPtr: " << schedualerDataPtr[i] << endl << endl; 
+         //std::cout << "read numbers: " << n << endl << endl; 
+         //std::cout << "schedualerDataPtr: " << schedualerDataPtr[i] << endl << endl; 
          switch(y){
             case 0:
                schedualerDataPtr[i].P_ID = n;
@@ -171,29 +163,29 @@ int main() {
    string inputStr = "";
    
    while(!(inputStr == "yes" || inputStr == "no")){
-      cout << "Would you like to enter data or upload a file yes for data no for file:" << endl;
+      std::cout << "Would you like to enter data or upload a file yes for data no for file:" << endl;
       getline(cin, inputStr);
       transform(inputStr.begin(), inputStr.end(), inputStr.begin(), ::tolower);
       inputStr = removeWhiteSpace(inputStr);
       
       if(!(inputStr == "yes" || inputStr == "no"))
-         cout << "That was an invalid input please try again" << endl;
+         std::cout << "That was an invalid input please try again" << endl;
    }
    
    if(inputStr == "yes"){
       schedSize = noFileLen();
    }else{
       while(!isFile){
-      cout << "Please enter your file name:" << endl;
+      std::cout << "Please enter your file name:" << endl;
       cin >> fileName;
       fileName = removeWhiteSpace(fileName);
 
       ifile.open(fileName);
          if(!ifile.fail()) {
-            cout << "file exists" << endl;
+            std::cout << "file exists" << endl;
             isFile = true;
          }else {
-            cout << "file doesn't exist" << endl;
+            std::cout << "file doesn't exist" << endl;
          }
       }
 
@@ -216,9 +208,9 @@ int main() {
    //sort our processes by arrival time
    sortByArr(schedDataPtr, schedSize);
    
-   //cout << inputStr << endl;
+   //std::cout << inputStr << endl;
 
-   cout << "Would you like to run MFQS or RTS? 1 for MFQS, 2 for RTS, anything else to exit.";
+   std::cout << "Would you like to run MFQS or RTS? 1 for MFQS, 2 for RTS, anything else to exit.";
    getline(cin, inputStr);
    int choice = 0;
    if(readIsInt(inputStr)){
@@ -235,13 +227,13 @@ int main() {
          rts(schedDataPtr, schedSize);
          break;
       default:
-         return; //quit program
+         return 0; //quit program
          break;
    }
    
 /*
    for(int i = 0; i < (schedualerSize); i++)
-      cout << "schedualerDataPtr Main: " << schedualerDataPtr[i].P_ID << " " << schedualerDataPtr[i].Burst << " " << schedualerDataPtr[i].Arrival << " " << schedualerDataPtr[i].Priority << " " << schedualerDataPtr[i].Deadline << " " << schedualerDataPtr[i].IO <<  endl;
+      std::cout << "schedualerDataPtr Main: " << schedualerDataPtr[i].P_ID << " " << schedualerDataPtr[i].Burst << " " << schedualerDataPtr[i].Arrival << " " << schedualerDataPtr[i].Priority << " " << schedualerDataPtr[i].Deadline << " " << schedualerDataPtr[i].IO <<  endl;
 */
    free(schedDataPtr);
 

@@ -1,4 +1,4 @@
-#include <sched.cpp>
+//#include "sched.cpp"
 #include <iostream>
 #include <algorithm>
 #include <string>
@@ -9,63 +9,63 @@
 que eventTracker; //que to hold all events for use in gantt chart. Stores in order each completion or partial completion.
 //We most likely want to reference P_ID and burst_calc for our gantt chart
 
-int time = 0; //global time variable
+int tTime = 0; //global tTime variable
 
 que mfqs(SchedData* ps, int pssize) {
     
     //read user input for num of queues
-    cout << "How many queues would you like for MFQS? You can have a maximum of 5";
-    string inp = "";
-    getline(cin, inp);
+    std::cout << "How many queues would you like for MFQS? You can have a maximum of 5";
+    std::string inp = "";
+    getline(std::cin, inp);
 
     //Parse our input
     int qnum = 0; //Number of queues
     if(readIsInt(inp)){//parse the int
         qnum = stoi(inp);
     } else {//invalid, so exit
-        cout << "That's not a valid integer! Exiting...";
-        return;
+        std::cout << "That's not a valid integer! Exiting...";
+        return eventTracker;
     } //Otherwise...
 
     if(qnum > 5 || qnum < 2) {
-        cout << "Cannot have " & qnum & " queues for MFQS. Exiting...";
-        return;
+        std::cout << "Cannot have that many queues for MFQS. Exiting...";
+        return eventTracker;
     }
 
-    //Prompt for time quantum
-    cout << "What would you like your base time quantum to be?";
-    getline(cin, inp);
+    //Prompt for tTime quantum
+    std::cout << "What would you like your base tTime quantum to be?";
+    getline(std::cin, inp);
 
     //Parse our input
-    int quant = 0; //time quantum
+    int quant = 0; //tTime quantum
     if(readIsInt(inp)){//parse the int
         quant = stoi(inp);
     } else {//invalid, so exit
-        cout << "That's not a valid integer! Exiting...";
-        return;
+        std::cout << "That's not a valid integer! Exiting...";
+        return eventTracker;
     } 
 
     if(quant < 1){ 
-        cout << "Cannot use a number < 1. Exiting...";
-        return;
+        std::cout << "Cannot use a number < 1. Exiting...";
+        return eventTracker;
     } //next...
 	
-	//Prompt for aging time
-    cout << "How long should the processes in the last queue age for?";
-    getline(cin, inp);
+	//Prompt for aging tTime
+    std::cout << "How long should the processes in the last queue age for?";
+    getline(std::cin, inp);
 
     //Parse our input
-    int agelim = 0; //time quantum
+    int agelim = 0; //tTime quantum
     if(readIsInt(inp)){//parse the int
         agelim = stoi(inp);
     } else {//invalid, so exit
-        cout << "That's not a valid integer! Exiting...";
-        return;
+        std::cout << "That's not a valid integer! Exiting...";
+        return eventTracker;
     } 
 
     if(agelim < 1){ 
-        cout << "Cannot use a number < 1. Exiting...";
-        return;
+        std::cout << "Cannot use a number < 1. Exiting...";
+        return eventTracker;
     } //next...
 
     //create queues
@@ -97,12 +97,12 @@ que mfqs(SchedData* ps, int pssize) {
 	bool done = false;
 	
 	while(!done){
-		if(ps[currPInd].Arrival == time){ //hit a process
+		if(ps[currPInd].Arrival == tTime){ //hit a process
 		
 			//handle duplicate arrivals
-			if(ps[currPInd + 1].Arrival == time){ //if there is a duplicate, find duplicates and sort by priority
+			if(ps[currPInd + 1].Arrival == tTime){ //if there is a duplicate, find duplicates and sort by priority
 				currInd = currPInd;
-				while(ps[currInd++].Arrival == time); //find last index of duplicate arrival. This should increment currInd
+				while(ps[currInd++].Arrival == tTime); //find last index of duplicate arrival. This should increment currInd
 				
 				for(i = currPInd; i < currInd - 1; i++){
 					for(j = currPInd; j < (currInd - 1 - i); j++){
@@ -135,8 +135,8 @@ que mfqs(SchedData* ps, int pssize) {
 			}//exit for loop.
 		}
 		
-		for(i = 0; i < qnum; i++){ //increment wait times and promote things if needed. Promotions handled before demotions
-			if(queues[i].size() > 0){ //if queue is not empty, increment wait times and promote/demote as necessary
+		for(i = 0; i < qnum; i++){ //increment wait tTimes and promote things if needed. Promotions handled before demotions
+			if(queues[i].size() > 0){ //if queue is not empty, increment wait tTimes and promote/demote as necessary
 				for(j = 0; j < queues[i].size(); j++) {
 					queues[i][j].WaitTime++;
 					
@@ -151,13 +151,13 @@ que mfqs(SchedData* ps, int pssize) {
 		if(runningP) { //something is running
 			t.BurstCalc++; //burst a tick
 			
-			if(t.burstTime == t.Burst){ //t has finished running!
-				t.completion = time; //save completion time
-                t.tat = t.completion - t.Arrival; //turn around time
-                //t.WaitTime = t.tat - t.Burst; //wait time.. we found this manually
+			if(t.BurstCalc == t.Burst){ //t has finished running!
+				t.completion = tTime; //save completion tTime
+                t.tat = t.completion - t.Arrival; //turn around tTime
+                //t.WaittTime = t.tat - t.Burst; //wait tTime.. we found this manually
                 runningP = false;
 				
-				cout << "Finished process " &  t.PID;
+				std::cout << "Finished process " + std::to_string(t.P_ID);
 
                 eventTracker.push_back(t); //on completion, save data for this run
 				
@@ -172,7 +172,7 @@ que mfqs(SchedData* ps, int pssize) {
 			} else {
 				//has not finished running :(
 				
-				if(t.burstTime == t.Burst - 1){ //I/O at tick before the process ends
+				if(t.BurstCalc == t.Burst - 1){ //I/O at tick before the process ends
 					//queue in the top to finish process
 					queues[0].push_back(t);//add to end of first queue
 					
@@ -186,7 +186,7 @@ que mfqs(SchedData* ps, int pssize) {
 			
 		} //end running calculations
 			
-		time++; //increment time
+		tTime++; //increment tTime
 	}
 	
     //we're done now. Return some information
@@ -205,17 +205,17 @@ que RR(QueueArr *queues, int qCurr, int quant) {
     que readyQ;
     bool runningP = false;
     
-    //int time = 0; //time counter 
+    //int tTime = 0; //tTime counter 
 
     int currInd = 0; //Will usually be 0 since these are queues
     SchedData t;
 
     while(q.size() > 0 || readyQ.size() > 0){ //each iteration is a tick. while either queue is not empty, do the things
 
-        if(q[0].Arrival == time){ //process has arrived
+        if(q[0].Arrival == tTime){ //process has arrived
 
-            if(q[1].Arrival == time){ //handle duplicate arrival times
-                while(q[currInd++].Arrival == time); //find last index of duplicate arrival. This should increment currInd
+            if(q[1].Arrival == tTime){ //handle duplicate arrival tTimes
+                while(q[currInd++].Arrival == tTime); //find last index of duplicate arrival. This should increment currInd
 
                 for(int i = 0; i < currInd; i++){ //swap by priority in this subset we found
                     for(int j = 0; j < (currInd - 1 - i); j++){
@@ -245,9 +245,9 @@ que RR(QueueArr *queues, int qCurr, int quant) {
             t.BurstCalc++; //burst a tick
 
             if(t.BurstCalc == t.Burst){ //finished process
-                t.completion = time; //save completion time
-                t.tat = t.completion - t.Arrival; //turn around time
-                t.WaitTime = t.tat - t.Burst; //wait time
+                t.completion = tTime; //save completion tTime
+                t.tat = t.completion - t.Arrival; //turn around tTime
+                t.WaittTime = t.tat - t.Burst; //wait tTime
                 runningP = false;
 
                 eventTracker.push_back(t); //on completion, save data for this run
@@ -258,15 +258,15 @@ que RR(QueueArr *queues, int qCurr, int quant) {
 
                     t.Burst -= t.BurstCalc; //save state of process. New burst is the burst minus what has already been done
                     t.BurstCalc = 0; //reset burst count for use in another queue
-                    t.WaitTime = 0; //reset wait time as this is going to a new queue
+                    t.WaittTime = 0; //reset wait tTime as this is going to a new queue
 
                     ret.push_back(t); //return this process for next queue
                     runningP = false; //clear running status
                 } //else.. Hasn't gone over yet! Keep running...
             }
 
-            for(int j = 0; j < readyQ.size(); j++){ //increment all wait times in ready queue
-                readyQ[j].WaitTime++;
+            for(int j = 0; j < readyQ.size(); j++){ //increment all wait tTimes in ready queue
+                readyQ[j].WaittTime++;
             }
 
         }
@@ -275,9 +275,9 @@ que RR(QueueArr *queues, int qCurr, int quant) {
             
         }// end running calculations
 
-        ++time;//increment time clock
+        ++tTime;//increment tTime clock
 
-    }//end time counter
+    }//end tTime counter
     return ret;
 }
 
