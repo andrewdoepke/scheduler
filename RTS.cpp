@@ -37,6 +37,11 @@ void rts(SchedData* ps, int pssize) {
 
     //loop to run through data
     while(psLocation < pssize){
+        //Check if we have bad data if so pass over
+        if(ps[psLocation].Arrival < 0 || ps[psLocation].Burst < 1 || ps[psLocation].Deadline < 1 ){
+            psLocation++;
+            continue;
+        }
         //Check if we have arrived at working process
         if(ps[psLocation].Arrival > time){
             //determin what to do if we have surpassed deadline
