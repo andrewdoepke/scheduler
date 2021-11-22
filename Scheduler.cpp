@@ -153,6 +153,8 @@ void fileData(SchedData *schedualerDataPtr, string fileName){
       }
       i++;
    }
+   
+   cout << "Loaded." << endl;
    ifile.close();
 }
 

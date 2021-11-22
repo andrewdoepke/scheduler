@@ -37,6 +37,8 @@ bool readIsInt(std::string input){
 void sortByArr(SchedData* data, int size) {
    int i, j;
    struct SchedData t;
+   
+   cout << "Sorting..." << endl;
 
    for(i = 0; i < size - 1; i++){
       for(j = 0; j < (size - 1 - i); j++){
@@ -47,6 +49,8 @@ void sortByArr(SchedData* data, int size) {
          }
       }
    }
+   
+   cout << "Sorting Complete." << endl;
 }
 
 bool isValid(SchedData a){
