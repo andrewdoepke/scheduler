@@ -162,37 +162,39 @@ void mfqs(SchedData* ps, int pssize) {
 	
 	while(currPInd < pssize){
 		cout << "Time: " + to_string(tTime) << endl;
-		if(isValid(ps[currPInd]) == false){
-			currPInd++;
-			actS--;
-		}
-		if(ps[currPInd].Arrival == tTime){ //hit a process
-			//cout << "Hit" << endl;
-			//return eventTracker;
 		
-			//handle duplicate arrivals
-			if(ps[currPInd + 1].Arrival == tTime){ //if there is a duplicate, find duplicates and sort by priority
-				currInd = currPInd;
-				while(ps[currInd++].Arrival == tTime); //find last index of duplicate arrival. This should increment currInd
-				
-				for(i = currPInd; i < currInd - 1; i++){
-					for(j = currPInd; j < (currInd - 1 - i); j++){
-						if(ps[j].Priority < ps[j+1].Priority){
-							t = ps[j];
-							ps[j] = ps[j+1];
-							ps[j+1] = t;
+		if(currPInd < pssize){
+			if(isValid(ps[currPInd]) == false){
+				currPInd++;
+				actS--;
+			}
+			if(ps[currPInd].Arrival == tTime){ //hit a process
+				//cout << "Hit" << endl;
+				//return eventTracker;
+			
+				//handle duplicate arrivals
+				if(ps[currPInd + 1].Arrival == tTime){ //if there is a duplicate, find duplicates and sort by priority
+					currInd = currPInd;
+					while(ps[currInd++].Arrival == tTime); //find last index of duplicate arrival. This should increment currInd
+					
+					for(i = currPInd; i < currInd - 1; i++){
+						for(j = currPInd; j < (currInd - 1 - i); j++){
+							if(ps[j].Priority < ps[j+1].Priority){
+								t = ps[j];
+								ps[j] = ps[j+1];
+								ps[j+1] = t;
+							}
 						}
 					}
-				}
-			}// end duplicate check. 
-			
-			ps[currPInd].BurstCalc = 0; //set burst calc
-			ps[currPInd].WaitTime = 0; //set wait time
-			queues[0].push_back(ps[currPInd]); //queue it
-			cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at time " + std::to_string(ps[currPInd].Arrival) << endl;
-			currPInd++; //increment
-		}//process is now queued..
-		
+				}// end duplicate check. 
+				
+				ps[currPInd].BurstCalc = 0; //set burst calc
+				ps[currPInd].WaitTime = 0; //set wait time
+				queues[0].push_back(ps[currPInd]); //queue it
+				cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at time " + std::to_string(ps[currPInd].Arrival) << endl;
+				currPInd++; //increment
+			}//process is now queued..
+		}
 		if(!runningP){ //queue next process if nothing is running
 			currQuant = quant/2; //divide by 2 since it will be multiplied again
 			for(i = 0; i < qnum; i++){ //pull from highest queue
@@ -238,14 +240,6 @@ void mfqs(SchedData* ps, int pssize) {
 
                 eventTracker.push_back(t); //on completion, save data for this run
 				
-				if(queues[0].size() > 0){ //do we end?
-					done = true;
-					for(que a : queues){
-						if(a.size() > 0){
-							done = false;
-						}
-					}
-				}
 			} else {
 				//has not finished running :(
 				
@@ -266,6 +260,8 @@ void mfqs(SchedData* ps, int pssize) {
 			
 		tTime++; //increment tTime
 	}
+	
+	cout << "Done!!" << endl;
 	
 	printCalcs(eventTracker, actS);
 	
