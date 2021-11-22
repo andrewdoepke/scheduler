@@ -114,12 +114,13 @@ void fileData(SchedData *schedualerDataPtr, string fileName){
 
    ifile.open(fileName);
 
-
+	cout << "Loading..." << endl;
    while(std::getline(ifile, unused)){
       if(isFirstLine){
          isFirstLine = false;
          continue;
       }
+	  
 
       stringstream stream(unused);
       int y = 0;
@@ -164,7 +165,7 @@ int main() {
    string inputStr = "";
    
    while(!(inputStr == "yes" || inputStr == "no")){
-      std::cout << "Would you like to enter data or upload a file yes for data no for file:" << endl;
+      std::cout << "Would you like to enter data, or upload a file? 'yes' for data, 'no' for file:" << endl;
       getline(cin, inputStr);
       transform(inputStr.begin(), inputStr.end(), inputStr.begin(), ::tolower);
       inputStr = removeWhiteSpace(inputStr);
@@ -211,12 +212,17 @@ int main() {
    
    //std::cout << inputStr << endl;
 
-   cout << "Would you like to run MFQS or RTS? 1 for MFQS, 2 for RTS, anything else to exit." << endl;
+   cout << "Would you like to run MFQS or RTS? 1 for MFQS, 2 for RTS, or anything else to exit." << endl;
    cin >> inputStr;
    int choice = 0;
    if(readIsInt(inputStr)){
       choice = stoi(inputStr);
    }
+   
+   /*
+  for(int i = 0; i < (schedSize); i++)
+	std::cout << "schedualerDataPtr Main: " << schedDataPtr[i].P_ID << " " << schedDataPtr[i].Burst << " " << schedDataPtr[i].Arrival << " " << schedDataPtr[i].Priority << " " << schedDataPtr[i].Deadline << " " << schedDataPtr[i].IO <<  endl;
+	*/
 
    switch(choice){
       case 1:
@@ -232,10 +238,7 @@ int main() {
          break;
    }
    
-/*
-   for(int i = 0; i < (schedualerSize); i++)
-      std::cout << "schedualerDataPtr Main: " << schedualerDataPtr[i].P_ID << " " << schedualerDataPtr[i].Burst << " " << schedualerDataPtr[i].Arrival << " " << schedualerDataPtr[i].Priority << " " << schedualerDataPtr[i].Deadline << " " << schedualerDataPtr[i].IO <<  endl;
-*/
+
    free(schedDataPtr);
 
    return 0;

@@ -42,3 +42,12 @@ void sortByArr(SchedData* data, int size) {
       }
    }
 }
+
+bool isValid(SchedData a){
+	bool valid = true;
+	if(a.Arrival < 1){
+		valid = false;
+	}
+	
+	return valid;
+}
