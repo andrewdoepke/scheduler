@@ -55,10 +55,10 @@ void sortByArr(SchedData* data, int size) {
 
 bool isValid(SchedData a){
 	bool valid = true;
-	if(a.Arrival < 1){
+	if(a.Arrival < 1 || a.Burst < 1){
 		valid = false;
 	}
-	
+
 	return valid;
 }
 
@@ -110,7 +110,7 @@ void mfqs(SchedData* ps, int pssize) {
     }
 
     //Prompt for tTime quantum
-    cout << "What would you like your base time quantum to be? This will be muiltiplied for each following queue. We recommend 4 to start."<< endl;
+    cout << "What would you like your base time quantum to be? This will be muiltiplied for each following queue."<< endl;
     cin >> inp;
 
     //Parse our input
