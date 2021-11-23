@@ -489,6 +489,8 @@ void rts(SchedData* ps, int pssize) {
            current_time->tm_min,
            current_time->tm_sec);
 		   
+	cout << "Running..." << endl;
+		   
     while(psLocation < pssize){
         preCalc = (psLocation * 100)/ pssize;
         if((((int)(preCalc)) % 10) == 0 && trackCalc == 0){
@@ -553,6 +555,7 @@ void rts(SchedData* ps, int pssize) {
         time++;
     }
 	
+	cout << "Done!!" << endl;
 	s = time(NULL);
     current_time = localtime(&s);
     printf("Finished running at %02d:%02d:%02d\n",
