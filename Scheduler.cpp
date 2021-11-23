@@ -212,9 +212,11 @@ int main() {
    }else{
       fileData(schedDataPtr, fileName);
    }
-
+	
+	cout << "Sorting..." << endl;
    //sort our processes by arrival time
    mergeSort(schedDataPtr, 0, schedSize-1);
+   cout << "Sorting Complete." << endl;
    
    //std::cout << inputStr << endl;
 
