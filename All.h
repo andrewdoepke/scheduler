@@ -501,7 +501,7 @@ void rts(SchedData* ps, int pssize, bool debug) {
             cout << "Process bad data: " << ps[psLocation].P_ID << endl;  
             #endif
             psLocation++;
-            trackCalc = 0;
+            //trackCalc = 0;
             continue;
         }
 
