@@ -319,17 +319,6 @@ void rts(SchedData* ps, int pssize) {
             cout << "Invalid input please try again:\n";
     }
 
-    //sort SchedData array by SlackTime
-   for(i = 0; i < pssize - 1; i++){
-      for(j = 0; j < (pssize - 1 - i); j++){
-         if(ps[j].SlackTime < ps[j+1].SlackTime){
-            t = ps[j];
-            ps[j] = ps[j + 1];
-            ps[j+1] = t;
-         }
-      }
-   }
-
     //loop to run through data
     while(psLocation < pssize){
         //Check if we have bad data if so pass over
