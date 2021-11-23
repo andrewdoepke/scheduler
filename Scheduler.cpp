@@ -99,7 +99,8 @@ void noFileData(SchedData *schedualerDataPtr, int chosenSize){
          schedualerDataPtr[y/6].Priority = tempArr[3];
          schedualerDataPtr[y/6].Deadline = tempArr[4];
          schedualerDataPtr[y/6].IO = tempArr[5];
-         schedualerDataPtr[y/6].SlackTime = tempArr[4] - (tempArr[1] +tempArr[2]);
+         schedualerDataPtr[y/6].SlackTime = tempArr[4] - (tempArr[1] + tempArr[2]);
+         schedualerDataPtr[y/6].BurstCalc = 0;
          i = 0;
       }
       y++;
@@ -145,6 +146,7 @@ void fileData(SchedData *schedualerDataPtr, string fileName){
                break;
             default:
                schedualerDataPtr[i].IO = n;
+               schedualerDataPtr[i].BurstCalc = 0;
                schedualerDataPtr[i].SlackTime + schedualerDataPtr[i].Deadline - schedualerDataPtr[i].Burst - schedualerDataPtr[i].Arrival;
                break;
          }
@@ -158,6 +160,7 @@ void fileData(SchedData *schedualerDataPtr, string fileName){
 int main() {
    SchedData *schedDataPtr;
    int schedSize = -1;
+   int choice = -1;
    bool isFile = false;
    fstream ifile;
    string fileName;
@@ -207,23 +210,28 @@ int main() {
    }
 
    //sort our processes by arrival time
-   sortByArr(schedDataPtr, schedSize);
+   mergeSort(schedDataPtr, 0, schedSize-1);
    
    //std::cout << inputStr << endl;
 
-   cout << "Would you like to run MFQS or RTS? 1 for MFQS, 2 for RTS, anything else to exit." << endl;
-   cin >> inputStr;
-   int choice = 0;
-   if(readIsInt(inputStr)){
-      choice = stoi(inputStr);
+   while(choice < 0 || choice > 1){
+      cout << "Would you like to run MFQS or RTS? 0 for MFQS, 1 for RTS, anything else to exit." << endl;
+      cin >> inputStr;
+      if(readIsInt(inputStr)){
+         choice = stoi(inputStr);
+      }
+      if(choice < 0 || choice > 1){
+         cout << "Error incalid input please try again" << endl;
+      }
    }
 
+
    switch(choice){
-      case 1:
+      case 0:
          //run mfqs
          mfqs(schedDataPtr, schedSize);
          break;
-      case 2:
+      case 1:
          //run rts
          rts(schedDataPtr, schedSize);
          break;

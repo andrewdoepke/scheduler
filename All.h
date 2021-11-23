@@ -6,6 +6,8 @@
 #include <queue>
 #include <vector>
 
+using namespace std;
+
 struct SchedData{
    int P_ID;
    int Burst;
@@ -13,7 +15,7 @@ struct SchedData{
    int Priority;
    int Deadline;
    int IO;
-   int BurstCalc = 0;
+   int BurstCalc;
    float WaitTime = 0;
    float tat;
    int completion = 0;//false if 0
@@ -47,6 +49,136 @@ void sortByArr(SchedData* data, int size) {
    }
 }
 
+/* -------------------------------------------------------------------- */
+void merge(SchedData *array, int const left, int const mid, int const right)
+{
+    auto const subArrayOne = mid - left + 1;
+    auto const subArrayTwo = right - mid;
+  
+    // Create temp arrays
+    auto *leftArray = new SchedData[subArrayOne],
+         *rightArray = new SchedData[subArrayTwo];
+  
+    // Copy data to temp arrays leftArray[] and rightArray[]
+    for (auto i = 0; i < subArrayOne; i++)
+        leftArray[i] = array[left + i];
+    for (auto j = 0; j < subArrayTwo; j++)
+        rightArray[j] = array[mid + 1 + j];
+  
+    auto indexOfSubArrayOne = 0, // Initial index of first sub-array
+        indexOfSubArrayTwo = 0; // Initial index of second sub-array
+    int indexOfMergedArray = left; // Initial index of merged array
+  
+    // Merge the temp arrays back into array[left..right]
+    while (indexOfSubArrayOne < subArrayOne && indexOfSubArrayTwo < subArrayTwo) {
+        if (leftArray[indexOfSubArrayOne].Arrival <= rightArray[indexOfSubArrayTwo].Arrival) {
+            array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+            indexOfSubArrayOne++;
+        }
+        else {
+            array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+            indexOfSubArrayTwo++;
+        }
+        indexOfMergedArray++;
+    }
+    // Copy the remaining elements of
+    // left[], if there are any
+    while (indexOfSubArrayOne < subArrayOne) {
+        array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+        indexOfSubArrayOne++;
+        indexOfMergedArray++;
+    }
+    // Copy the remaining elements of
+    // right[], if there are any
+    while (indexOfSubArrayTwo < subArrayTwo) {
+        array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+        indexOfSubArrayTwo++;
+        indexOfMergedArray++;
+    }
+}
+  
+// begin is for left index and end is
+// right index of the sub-array
+// of arr to be sorted */
+void mergeSort(SchedData *array, int const begin, int const end)
+{
+    if (begin >= end)
+        return; // Returns recursively
+  
+    auto mid = begin + (end - begin) / 2;
+    mergeSort(array, begin, mid);
+    mergeSort(array, mid + 1, end);
+    merge(array, begin, mid, end);
+}
+
+void merges(SchedData *array, int const left, int const mid, int const right)
+{
+    auto const subArrayOne = mid - left + 1;
+    auto const subArrayTwo = right - mid;
+  
+    // Create temp arrays
+    auto *leftArray = new SchedData[subArrayOne],
+         *rightArray = new SchedData[subArrayTwo];
+  
+    // Copy data to temp arrays leftArray[] and rightArray[]
+    for (auto i = 0; i < subArrayOne; i++)
+        leftArray[i] = array[left + i];
+    for (auto j = 0; j < subArrayTwo; j++)
+        rightArray[j] = array[mid + 1 + j];
+  
+    auto indexOfSubArrayOne = 0, // Initial index of first sub-array
+        indexOfSubArrayTwo = 0; // Initial index of second sub-array
+    int indexOfMergedArray = left; // Initial index of merged array
+  
+    // Merge the temp arrays back into array[left..right]
+    while (indexOfSubArrayOne < subArrayOne && indexOfSubArrayTwo < subArrayTwo) {
+        if (leftArray[indexOfSubArrayOne].Arrival < rightArray[indexOfSubArrayTwo].Arrival) {
+            array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+            indexOfSubArrayOne++;
+        }else if(leftArray[indexOfSubArrayOne].Arrival == rightArray[indexOfSubArrayTwo].Arrival){
+            if(leftArray[indexOfSubArrayOne].SlackTime <= rightArray[indexOfSubArrayTwo].SlackTime){
+                array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+                indexOfSubArrayOne++;
+            }else{
+                array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+                indexOfSubArrayTwo++;
+            }
+        }else {
+            array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+            indexOfSubArrayTwo++;
+        }
+        indexOfMergedArray++;
+    }
+    // Copy the remaining elements of
+    // left[], if there are any
+    while (indexOfSubArrayOne < subArrayOne) {
+        array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
+        indexOfSubArrayOne++;
+        indexOfMergedArray++;
+    }
+    // Copy the remaining elements of
+    // right[], if there are any
+    while (indexOfSubArrayTwo < subArrayTwo) {
+        array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
+        indexOfSubArrayTwo++;
+        indexOfMergedArray++;
+    }
+}
+  
+// begin is for left index and end is
+// right index of the sub-array
+// of arr to be sorted */
+void mergeSortWithSlack(SchedData *array, int const begin, int const end)
+{
+    if (begin >= end)
+        return; // Returns recursively
+  
+    auto mid = begin + (end - begin) / 2;
+    mergeSort(array, begin, mid);
+    mergeSort(array, mid + 1, end);
+    merges(array, begin, mid, end);
+}
+
 
 //We most likely want to reference P_ID and burst_calc for our gantt chart
 
@@ -56,10 +188,27 @@ que mfqs(SchedData* ps, int pssize) {
     
     que eventTracker; //que to hold all events for use in gantt chart. Stores in order each completion or partial completion.
     
+    string inp = "";
+    int qnum = 0;
+    int quant = 0;
+    int agelim = 0;
+
     //read user input for num of queues
-    std::cout << "How many queues would you like for MFQS? You can have a maximum of 5";
-    std::string inp = "";
-    getline(std::cin, inp);
+    while (qnum < 2 || qnum > 5){
+        cout << "How many queues would you like for MFQS? You can have a maximum of 5";
+        getline(cin, inp);
+        if(readIsInt(inp)){//parse the int
+            qnum = stoi(inp);
+        }
+        if(qnum < 2 || qnum > 5 || !readIsInt(inp)){
+            cout << "Error invalid input please try again" << endl;
+        }
+    }
+    
+    /*
+    cout << "How many queues would you like for MFQS? You can have a maximum of 5";
+    string inp = "";
+    getline(cin, inp);
 
     //Parse our input
     int qnum = 0; //Number of queues
@@ -74,11 +223,22 @@ que mfqs(SchedData* ps, int pssize) {
         std::cout << "Cannot have that many queues for MFQS. Exiting...";
         return eventTracker;
     }
+    */
 
     //Prompt for tTime quantum
-    std::cout << "What would you like your base tTime quantum to be?";
-    getline(std::cin, inp);
 
+    while(quant < 1){
+        cout << "What would you like your base tTime quantum to be?";
+        getline(cin, inp);
+        if(readIsInt(inp)){//parse the int
+        quant = stoi(inp);
+        }
+        if(quant < 1 || !readIsInt(inp)){
+            cout << "Error invalid input please try again" << endl;
+        }
+    }
+
+    /*
     //Parse our input
     int quant = 0; //tTime quantum
     if(readIsInt(inp)){//parse the int
@@ -92,11 +252,21 @@ que mfqs(SchedData* ps, int pssize) {
         std::cout << "Cannot use a number < 1. Exiting...";
         return eventTracker;
     } //next...
+    */
 	
 	//Prompt for aging tTime
-    std::cout << "How long should the processes in the last queue age for?";
-    getline(std::cin, inp);
+    while(agelim < 1){
+        cout << "How long should the processes in the last queue age for?";
+        getline(cin, inp);
+        if(readIsInt(inp)){//parse the int
+        agelim = stoi(inp);
+        }
+        if(agelim < 1 || !readIsInt(inp)){
+            cout << "Error invalid input please try again" << endl;
+        }
+    }
 
+    /*
     //Parse our input
     int agelim = 0; //tTime quantum
     if(readIsInt(inp)){//parse the int
@@ -110,6 +280,8 @@ que mfqs(SchedData* ps, int pssize) {
         std::cout << "Cannot use a number < 1. Exiting...";
         return eventTracker;
     } //next...
+    */
+
 
     //create queues
     QueueArr queues(qnum); 
@@ -329,14 +501,15 @@ void fcfs(que* queue){
 }   
 */
 
-using namespace std;
-
 void rts(SchedData* ps, int pssize) {
     struct SchedData t;
     string userIn;
     int hardOrSoft = -1;
     int psLocation = 0, i, j;
     int time = 0;
+    int dataTrip = 0;
+    float preCalc;
+    int trackCalc = 0;
 
 
     //Get user in for what type of Real time schedueler it is
@@ -349,34 +522,60 @@ void rts(SchedData* ps, int pssize) {
             cout << "Invalid input please try again:\n";
     }
 
-    //sort SchedData array by SlackTime
+    /*sort SchedData array by SlackTime
    for(i = 0; i < pssize - 1; i++){
       for(j = 0; j < (pssize - 1 - i); j++){
-         if(ps[j].SlackTime < ps[j+1].SlackTime){
+         if(ps[j].Arrival > ps[j+1].Arrival){
             t = ps[j];
             ps[j] = ps[j + 1];
             ps[j+1] = t;
          }
       }
    }
+   */
+    
+    mergeSortWithSlack(ps, 0, pssize-1);
 
+   while(psLocation < pssize){
+       cout << "P_ID: " << ps[psLocation].P_ID << " Arrival: " << ps[psLocation].Arrival << " Deadline: " << ps[psLocation].Deadline << " Burst: " << ps[psLocation].Burst << endl;
+       psLocation++;
+   }
+   cout << endl;
+   psLocation = 0;
+    time = ps[psLocation].Arrival;
     //loop to run through data
     while(psLocation < pssize){
+        preCalc = (psLocation * 100)/ pssize;
+        if((((int)(preCalc)) % 10) == 0 && trackCalc == 0){
+            cout << preCalc << "% of the way done" << endl;
+            trackCalc = 1;
+        }
+
+
         //Check if we have bad data if so pass over
-        if(ps[psLocation].Arrival < 0 || ps[psLocation].Burst < 1 || ps[psLocation].Deadline < 1 ){
+        if(dataTrip == 0 && (ps[psLocation].Arrival < 0 || ps[psLocation].Burst < 1 || ps[psLocation].Deadline < 1 )){
+            cout << "process bad data: " << ps[psLocation].P_ID << endl;  
             psLocation++;
-            cout << "process faild: " << ps[psLocation].P_ID << endl;  
+            trackCalc = 0;
             continue;
         }
+
+        //if(((int)(((float)(psLocation/pssize)) * 100)) % 10  == 0)
+        //    cout << "Data is: " << (((psLocation/pssize) * 100)) << "% processed" << endl;
+
+        //trip we have checked this data
+        dataTrip = 1;
+
         //Check if we have arrived at working process
-        if(ps[psLocation].Arrival > time){
+        if(ps[psLocation].Arrival <= time){
             //determin what to do if we have surpassed deadline
-            cout << " got to incriment burst " << endl;
             if(ps[psLocation].Deadline <= time){
                 if(hardOrSoft == 0){
                     //soft so if deadline not met print out failed process and continue
                     cout << "Schedueler failed on process: " << ps[psLocation].P_ID << " Clock time = "  << time << " Deadline = " << ps[psLocation].Deadline << endl;
                     psLocation++;
+                    trackCalc =0;
+                    dataTrip = 0;
                     continue;
                 }else{
                     //hard so "Crash" Program and get out telling the user what process failed
@@ -387,18 +586,20 @@ void rts(SchedData* ps, int pssize) {
                 }
             }
 
-            if(ps[psLocation].BurstCalc == ps[psLocation].Burst){
-                //move to next process to work on
-                cout << "moving to next data set" << endl;
-                psLocation++;
-            }
-        
             //iterate the bust tracker for working data
             ps[psLocation].BurstCalc++;
         }
+        //check if we have finished out burst 
+        if(ps[psLocation].BurstCalc == ps[psLocation].Burst){
+            // use to see if we have already checked data so we dont always have to do the calculations for good data
+            dataTrip = 0;
+            trackCalc = 0;
+            //move to next process to work on
+            cout << "moving to next data set" << endl;
+            psLocation++;
+        }
         //iterate time
         time++;
-        //cout << time << endl;
     }
         cout << "End of Real Time Schedueler" << endl;
         return;
