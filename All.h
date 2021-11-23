@@ -306,6 +306,8 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 
 		if(debug)
 			cout << "Time: " + to_string(tTime) << endl;
+        else
+            printProgress(((double)psLocation)/((double)pssize));
 		
 		
 		if(currPInd < pssize){ //if there are still things to be queued
