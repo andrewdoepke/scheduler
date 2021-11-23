@@ -1,4 +1,5 @@
 #define DEBUG
+//#define FINALPRINT
 
 #include <iostream>
 #include <algorithm>
@@ -55,8 +56,11 @@ void printCalcs(que events, int s){
 	double att = 0;
 	
 	for(SchedData a : events){
+		#ifdef FINALPRINT
 		printP(a);
 		cout << "That finished in queue " + to_string(a.finishQ) << endl;
+		#endif
+		
 		awt += a.WaitTime;
 		att += a.tat;
 	}
@@ -66,7 +70,7 @@ void printCalcs(que events, int s){
 	
 	cout << "\nAverage Wait Time: " + to_string(awt) << endl;
 	cout << "Average Turn Around Time: " + to_string(att) << endl;
-	cout << "Total number of scheduled processes: " + to_string(s) << endl; 
+	cout << "Total number of scheduled processes: " + to_string(s) + "\n" << endl; 
 }
 
 /* -------------------------------------------------------------------- */
