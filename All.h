@@ -15,9 +15,6 @@
 #include <chrono>
 #include <iostream>
 #include <thread>
-//#include <boost/progress.hpp>
-//#include <boost/timer.hpp>
-//#include <vector>
 
 using namespace std;
 
@@ -497,12 +494,6 @@ void rts(SchedData* ps, int pssize, bool debug) {
 
    cout << endl;
    psLocation = 0;
-    //loop to run through data
-    //for (size_t i = 0; i < pssize; i++)
-    //{
-    //    cout << "DATA P_ID: " << ps[i].P_ID << " Arrival: " << ps[i].Arrival << " Deadline" << ps[i].Deadline <<  endl;
-    //}
-    //return;
     
 	
 	time_t s, val = 1;
@@ -521,10 +512,6 @@ void rts(SchedData* ps, int pssize, bool debug) {
     while(psLocation < pssize){
         if(!debug)
             printProgress(((double)psLocation)/((double)pssize));
-        //cout << "PS DIV: " << psLocation/pssize << endl;
-        
-        //if(psLocation > 2000)
-        //    debug = false;
 
         //Check if we have bad data if so pass over
         if(dataTrip == 0 && (ps[psLocation].Arrival < 0 || ps[psLocation].Burst < 1 || ps[psLocation].Deadline < 1 )){
@@ -581,12 +568,6 @@ void rts(SchedData* ps, int pssize, bool debug) {
         //iterate tTime
         tTime++;
 
-        //preCalc = (psLocation * 100)/ pssize;
-        //if(!locArr[trackCalc] && (((int)(preCalc)) % 10) == 0){
-        //    cout << preCalc << "% of the way done" << endl;
-        //    locArr[trackCalc] = true;
-        //    trackCalc++;
-        //}
     }
     if(!debug)
         printProgress(((double)psLocation)/((double)pssize));
