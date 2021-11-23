@@ -515,7 +515,7 @@ void rts(SchedData* ps, int pssize, bool debug) {
                 if(hardOrSoft == 0){
                     //soft so if deadline not met print out failed process and continue
                     #ifdef DEBUG
-                    cout << "Schedueler failed on process: " << ps[psLocation].P_ID << " Clock time = "  << time << " Deadline = " << ps[psLocation].Deadline << endl;
+                    cout << "Scheduler failed on process: " << ps[psLocation].P_ID << " Clock time = "  << time << " Deadline = " << ps[psLocation].Deadline << endl;
                     #endif
                     psLocation++;
                     trackCalc = 0;
@@ -525,7 +525,7 @@ void rts(SchedData* ps, int pssize, bool debug) {
                 }else{
                     //hard so "Crash" Program and get out telling the user what process failed
                     cout << "Scheduler failed on process: " << ps[psLocation].P_ID << endl;
-                    cout << "Clock tTime = "  << tTime << " Deadline = " << ps[psLocation].Deadline << endl;
+                    cout << "Clock Time = "  << tTime << " Deadline = " << ps[psLocation].Deadline << endl;
                     ps[psLocation].WaitTime = 0;
                     cout << "EXIT......" << endl;
                     break;
@@ -569,9 +569,9 @@ void rts(SchedData* ps, int pssize, bool debug) {
     waitT /= trackNumOFComp;
     turT /= trackNumOFComp;
     
-        cout << "End of Real tTime Schedueler" << endl;
+        cout << "End of Real Time Scheduler" << endl;
         cout << "Average Wait Time: " << waitT << endl;
-        cout << "Average Turn Around tTime: " << turT << endl;
+        cout << "Average Turn Around Time: " << turT << endl;
         cout << "Total number of completed processes: " << trackNumOFComp << endl;
         return;
 }
