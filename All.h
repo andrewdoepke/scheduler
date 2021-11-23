@@ -483,6 +483,18 @@ void rts(SchedData* ps, int pssize, bool debug) {
    psLocation = 0;
     //time = ps[psLocation].Arrival;
     //loop to run through data
+	
+	time_t s, val = 1;
+    struct tm* current_time;
+    s = time(NULL);
+    current_time = localtime(&s);
+    printf("Started running at %02d:%02d:%02d\n",
+           current_time->tm_hour,
+           current_time->tm_min,
+           current_time->tm_sec);
+		   
+	cout << "Running..." << endl;
+		   
     while(psLocation < pssize){
         preCalc = (psLocation * 100)/ pssize;
         if(trackCalc == 0 && (((int)(preCalc)) % 10) == 0){
@@ -549,6 +561,14 @@ void rts(SchedData* ps, int pssize, bool debug) {
         //iterate time
         time++;
     }
+	
+	cout << "Done!!" << endl;
+	s = time(NULL);
+    current_time = localtime(&s);
+    printf("Finished running at %02d:%02d:%02d\n",
+           current_time->tm_hour,
+           current_time->tm_min,
+           current_time->tm_sec);
 
     for ( i = 0; i < pssize; i++){
         waitT += ps[psLocation].WaitTime;
