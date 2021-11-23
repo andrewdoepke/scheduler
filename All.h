@@ -1,4 +1,4 @@
-//#define DEBUG
+//If this is enabled, all processes' information will be printed out at the end of MFQS
 //#define FINALPRINT
 
 #include <iostream>
@@ -322,7 +322,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 						queues[0].push_back(ps[currPInd]); //queue it
 						
 						if(debug)
-							cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at tTime " + std::to_string(ps[currPInd].Arrival) << endl;
+							cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at time " + std::to_string(ps[currPInd].Arrival) << endl;
 						
 						currPInd++; //increment
 					}
@@ -332,7 +332,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 					queues[0].push_back(ps[currPInd]); //queue it
 					
 					if(debug)
-						cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at tTime " + std::to_string(ps[currPInd].Arrival) << endl;
+						cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at time " + std::to_string(ps[currPInd].Arrival) << endl;
 					
 					currPInd++; //increment
 				}
@@ -367,7 +367,6 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 				
 					if(debug)
 						cout << "Promoting process " + to_string(queues[qnum - 1][j].P_ID) + "." << endl;
-
 					
 					queues[qnum - 2].push_back(queues[qnum - 1][j]); //promote to above queue
 					queues[qnum - 1].erase(queues[qnum - 1].begin() + j); //get rid of it from previous queue
@@ -387,7 +386,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
                 runningP = false;
 				
 				if(debug)
-					std::cout << "Finished process " + std::to_string(t.P_ID) + " in queue " + to_string(currQ) + " at tTime " + to_string(tTime) << endl;
+					std::cout << "Finished process " + std::to_string(t.P_ID) + " in queue " + to_string(currQ) + " at time " + to_string(tTime) << endl;
 
 				
                 eventTracker.push_back(t); //on completion, save data for this run
@@ -413,7 +412,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 				} else if(currQ != qnum - 1){ //RR Queues demote?
 					if(t.BurstCalc > currQuant){ //process has went over quantum, demote... 
 						if(debug)
-							cout << "Demoting process " + to_string(t.P_ID) + " down a queue." << endl;
+							cout << "Demoting process " + to_string(t.P_ID) + " down a queue. Current burst: " + to_string(t.BurstCalc) << endl;
 
 						queues[currQ + 1].push_back(t);
 						runningP = false;
@@ -450,10 +449,6 @@ void rts(SchedData* ps, int pssize, bool debug) {
     int trackCalc = 0;
     int trackNumOFComp = 0;
     double waitT = 0, turT = 0;
-
-    if(!debug){
-		#undef DEBUG
-	}
 
 
     //Get user in for what type of Real time schedueler it is
