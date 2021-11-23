@@ -153,6 +153,7 @@ void mfqs(SchedData* ps, int pssize) {
 	SchedData t;
 	int currQ = 0;
 	int currQuant = quant;
+	int temptat = 0;
 	
 	bool runningP = false; //store if process is currently running
 	
@@ -221,6 +222,7 @@ void mfqs(SchedData* ps, int pssize) {
 			}//exit for loop.
 		}
 		
+		/*
 		for(i = 0; i < qnum; i++){ //increment wait tTimes and promote things if needed. Promotions handled before demotions
 			if(queues[i].size() > 0){ //if queue is not empty, increment wait tTimes and promote/demote as necessary
 				for(j = 0; j < queues[i].size(); j++) {
@@ -233,7 +235,17 @@ void mfqs(SchedData* ps, int pssize) {
 				}
 			}
 		}
+		*/
 		
+		if(queues[qnum - 1].size() > 0){
+			for(j = 0; j < queues[qnum-1].size(); j++){ //promote last queue if waiting for a while
+				temptat = tTime - queues[qnum-1][j].Arrival; //get turnaround time (partial)
+				if(temptat - queues[qnum-1][j].BurstCalc >= agelim){ //calculate current wait time and see if it is too much
+					queues[qnum - 2].push_back(queues[qnum - 1][j]); //promote to above queue
+					queues[qnum - 1].erase(queues[qnum - 1].begin() + j); //get rid of it from previous queue
+				}
+			}
+		}
 		if(runningP) { //something is running
 			t.BurstCalc++; //burst a tick
 			//cout << "Burst: " + to_string(t.BurstCalc) << endl;
@@ -241,10 +253,10 @@ void mfqs(SchedData* ps, int pssize) {
 			if(t.BurstCalc == t.Burst){ //t has finished running!
 				t.completion = tTime; //save completion tTime
                 t.tat = t.completion - t.Arrival; //turn around tTime
-                //t.WaittTime = t.tat - t.Burst; //wait tTime.. we found this manually
+                t.WaitTime = t.tat - t.Burst; //wait tTime.. we found this manually
                 runningP = false;
 				
-				std::cout << "Finished process " + std::to_string(t.P_ID) + " in queue " + to_string(currQ) + " at time " + to_string(tTime) + "\n\n\n"<< endl;
+				std::cout << "Finished process " + std::to_string(t.P_ID) + " in queue " + to_string(currQ) + " at time " + to_string(tTime) + "\n"<< endl;
 				//return;
 
                 eventTracker.push_back(t); //on completion, save data for this run
