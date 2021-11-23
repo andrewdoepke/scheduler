@@ -1,3 +1,5 @@
+#define DEBUG
+
 #include <iostream>
 #include <algorithm>
 #include <string>
@@ -199,8 +201,8 @@ void mergeSortWithSlack(SchedData *array, int const begin, int const end)
 
 
 void mfqs(SchedData* ps, int pssize, bool debug) {
-	if(debug){
-		#define DEBUG
+	if(!debug){
+		#undef DEBUG
 	}
 	
 	int tTime = 0; //Time counter
