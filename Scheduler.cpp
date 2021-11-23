@@ -233,7 +233,7 @@ int main() {
    
 	int d = -1;
 	while(d < 0 || d > 1){
-		cout << "Would you like to turn debugging on? 0 for no, 1 for yes." << endl;
+		cout << "Would you like to turn debugging on? 0 for no, 1 for yes" << endl;
 		cin >> inputStr;
 		if(readIsInt(inputStr)){
 		 d = stoi(inputStr);
