@@ -102,6 +102,7 @@ void noFileData(SchedData *schedualerDataPtr, int chosenSize){
          schedualerDataPtr[y/6].SlackTime = tempArr[4] - (tempArr[1] + tempArr[2]);
          schedualerDataPtr[y/6].BurstCalc = 0;
          i = 0;
+         cout << endl;
       }
       y++;
    }
