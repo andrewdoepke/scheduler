@@ -1,5 +1,7 @@
 //If this is enabled, all processes' information will be printed out at the end of MFQS
 //#define FINALPRINT
+#define PBSTR "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||"
+#define PBWIDTH 60
 
 #include <iostream>
 #include <algorithm>
@@ -9,6 +11,13 @@
 #include <queue>
 #include <vector>
 #include <cstdio>
+#include <unistd.h>
+#include <chrono>
+#include <iostream>
+#include <thread>
+//#include <boost/progress.hpp>
+//#include <boost/timer.hpp>
+//#include <vector>
 
 using namespace std;
 
@@ -72,6 +81,14 @@ void printCalcs(que events, int s){
 	cout << "\nAverage Wait time: " + to_string(awt) << endl;
 	cout << "Average Turn Around time: " + to_string(att) << endl;
 	cout << "Total number of scheduled processes: " + to_string(s) + "\n" << endl; 
+}
+
+void printProgress(double percentage) {
+    int val = (int) (percentage * 100);
+    int lpad = (int) (percentage * PBWIDTH);
+    int rpad = PBWIDTH - lpad;
+    printf("\r%3d%% [%.*s%*s]", val, lpad, PBSTR, rpad, "");
+    fflush(stdout);
 }
 
 /* -------------------------------------------------------------------- */
@@ -161,14 +178,16 @@ void merges(SchedData *array, int const left, int const mid, int const right)
             array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
             indexOfSubArrayOne++;
         }else if(leftArray[indexOfSubArrayOne].Arrival == rightArray[indexOfSubArrayTwo].Arrival){
-            if(leftArray[indexOfSubArrayOne].SlackTime <= rightArray[indexOfSubArrayTwo].SlackTime){
+            if (leftArray[indexOfSubArrayOne].Burst <= rightArray[indexOfSubArrayTwo].Burst) {
                 array[indexOfMergedArray] = leftArray[indexOfSubArrayOne];
                 indexOfSubArrayOne++;
-            }else{
+            }
+            else {
                 array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
                 indexOfSubArrayTwo++;
             }
-        }else {
+        }
+        else {
             array[indexOfMergedArray] = rightArray[indexOfSubArrayTwo];
             indexOfSubArrayTwo++;
         }
@@ -199,8 +218,8 @@ void mergeSortWithSlack(SchedData *array, int const begin, int const end)
         return; // Returns recursively
   
     auto mid = begin + (end - begin) / 2;
-    mergeSort(array, begin, mid);
-    mergeSort(array, mid + 1, end);
+    mergeSortWithSlack(array, begin, mid);
+    mergeSortWithSlack(array, mid + 1, end);
     merges(array, begin, mid, end);
 }
 
@@ -266,6 +285,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 	int currQ = 0;
 	int currQuant = quant;
 	int temptat = 0;
+    int psLocation = 0;
 	
 	bool runningP = false; //store if process is currently running
 	
@@ -283,10 +303,18 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 	cout << "Running simulation..." << endl;
 	
 	while(!done){
+<<<<<<< Updated upstream
 
 		if(debug)
 			cout << "Time: " + to_string(tTime) << endl;
 		
+=======
+       if(!debug)
+        printProgress(((double)psLocation)/((double)pssize));
+		#ifdef DEBUG
+		cout << "tTime: " + to_string(tTime) << endl;
+		#endif
+>>>>>>> Stashed changes
 		
 		if(currPInd < pssize){ //if there are still things to be queued
 			if(isValid(ps[currPInd]) == false){ //validate
@@ -383,6 +411,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
                 t.tat = t.completion - t.Arrival; //turn around tTime
                 t.WaitTime = t.tat - t.Burst; //wait time.. we found this manually
 				t.finishQ = currQ; //save finish queue
+                psLocation++;
                 runningP = false;
 				
 				if(debug)
@@ -424,6 +453,9 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 			
 		tTime++; //increment tTime
 	} //end tTime simulation
+
+    if(!debug)
+        printProgress(((double)psLocation)/((double)pssize));
 	
 	cout << "Done!!" << endl;
 	s = time(NULL);
@@ -449,7 +481,17 @@ void rts(SchedData* ps, int pssize, bool debug) {
     int trackCalc = 0;
     int trackNumOFComp = 0;
     double waitT = 0, turT = 0;
+    bool locArr[10];
 
+    for (int i = 0; i < 10; i++){
+        locArr[i] = false;
+    }
+    
+
+<<<<<<< Updated upstream
+=======
+
+>>>>>>> Stashed changes
 
     //Get user in for what type of Real time schedueler it is
     while(hardOrSoft < 0 || hardOrSoft > 1){
@@ -465,8 +507,13 @@ void rts(SchedData* ps, int pssize, bool debug) {
 
    cout << endl;
    psLocation = 0;
-    //tTime = ps[psLocation].Arrival;
     //loop to run through data
+    //for (size_t i = 0; i < pssize; i++)
+    //{
+    //    cout << "DATA P_ID: " << ps[i].P_ID << " Arrival: " << ps[i].Arrival << " Deadline" << ps[i].Deadline <<  endl;
+    //}
+    //return;
+    
 	
 	time_t s, val = 1;
     struct tm* current_time;
@@ -478,22 +525,23 @@ void rts(SchedData* ps, int pssize, bool debug) {
            current_time->tm_sec);
 		   
 	cout << "Running..." << endl;
-		   
+	int badDat = 0;
+    int missProcess = 0;
+ 
     while(psLocation < pssize){
-        preCalc = (psLocation * 100)/ pssize;
-        if(trackCalc == 0 && (((int)(preCalc)) % 10) == 0){
-            cout << preCalc << "% of the way done" << endl;
-            trackCalc = 1;
-        }
-
+        if(!debug)
+            printProgress(((double)psLocation)/((double)pssize));
+        //cout << "PS DIV: " << psLocation/pssize << endl;
+        
+        //if(psLocation > 2000)
+        //    debug = false;
 
         //Check if we have bad data if so pass over
         if(dataTrip == 0 && (ps[psLocation].Arrival < 0 || ps[psLocation].Burst < 1 || ps[psLocation].Deadline < 1 )){
-            #ifdef DEBUG
-            cout << "Process bad data: " << ps[psLocation].P_ID << endl;  
-            #endif
+            if(debug)
+                cout << "Process bad data: " << ps[psLocation].P_ID << endl;  
+            badDat++;
             psLocation++;
-            //trackCalc = 0;
             continue;
         }
 
@@ -503,15 +551,14 @@ void rts(SchedData* ps, int pssize, bool debug) {
         //Check if we have arrived at working process
         if(ps[psLocation].Arrival <= tTime){
             //determin what to do if we have surpassed deadline
-            if(ps[psLocation].Deadline <= tTime){
+            if(ps[psLocation].Deadline < tTime){
                 if(hardOrSoft == 0){
                     //soft so if deadline not met print out failed process and continue
-                    #ifdef DEBUG
-                    cout << "Scheduler failed on process: " << ps[psLocation].P_ID << " Clock time = "  << time << " Deadline = " << ps[psLocation].Deadline << endl;
-                    #endif
+                    if(debug)
+                        cout << "Scheduler failed on process: " << ps[psLocation].P_ID << " Clock time = "  << tTime << " Deadline = " << ps[psLocation].Deadline << " Burst = " << ps[psLocation].Burst << endl;
                     psLocation++;
-                    trackCalc = 0;
                     dataTrip = 0;
+                    missProcess++;
                     ps[psLocation].WaitTime = 0;
                     continue;
                 }else{
@@ -528,23 +575,31 @@ void rts(SchedData* ps, int pssize, bool debug) {
             ps[psLocation].BurstCalc++;
         }
         //check if we have finished out burst 
-        if(ps[psLocation].BurstCalc == ps[psLocation].Burst){
+        if(ps[psLocation].BurstCalc > ps[psLocation].Burst){
             // use to see if we have already checked data so we dont always have to do the calculations for good data
             dataTrip = 0;
-            trackCalc = 0;
             trackNumOFComp++;
             ps[psLocation].tat = tTime - ps[psLocation].Arrival;
             ps[psLocation].WaitTime = ps[psLocation].tat - ps[psLocation].Burst; //wait tTime.. we found this manually
 
             //move to next process to work on
-            #ifdef DEBUG
-            cout << "moving to next data set" << endl;
-            #endif
+            if(debug)
+                cout << "moving to next data set" << endl;
             psLocation++;
         }
+            
         //iterate tTime
         tTime++;
+
+        //preCalc = (psLocation * 100)/ pssize;
+        //if(!locArr[trackCalc] && (((int)(preCalc)) % 10) == 0){
+        //    cout << preCalc << "% of the way done" << endl;
+        //    locArr[trackCalc] = true;
+        //    trackCalc++;
+        //}
     }
+    if(!debug)
+        printProgress(((double)psLocation)/((double)pssize));
 	
 	cout << "Done!!" << endl;
 	s = time(NULL);
@@ -563,12 +618,15 @@ void rts(SchedData* ps, int pssize, bool debug) {
         turT += ps[i].tat;
     }
 
+    //cout << endl << " Bad DATA : " << badDat << endl;
+    //cout << endl << " Missed Process : " << missProcess << endl;
+
     waitT /= trackNumOFComp;
     turT /= trackNumOFComp;
     
-        cout << "End of Real Time Scheduler" << endl;
-        cout << "Average Wait Time: " << waitT << endl;
-        cout << "Average Turn Around Time: " << turT << endl;
-        cout << "Total number of completed processes: " << trackNumOFComp << endl;
-        return;
+    cout << "End of Real Time Scheduler" << endl;
+    cout << "Average Wait Time: " << waitT << endl;
+    cout << "Average Turn Around Time: " << turT << endl;
+    cout << "Total number of completed processes: " << trackNumOFComp << endl;
+    return;
 }
