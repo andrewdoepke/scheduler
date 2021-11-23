@@ -227,8 +227,8 @@ void mfqs(SchedData* ps, int pssize) {
 
     //read user input for num of queues
     while (qnum < 2 || qnum > 5){
-        cout << "How many queues would you like for MFQS? You can have a maximum of 5";
-        getline(cin, inp);
+        cout << "How many queues would you like for MFQS? You can have a maximum of 5" << endl;
+        cin >> inp;
         if(readIsInt(inp)){//parse the int
             qnum = stoi(inp);
         }
@@ -260,8 +260,9 @@ void mfqs(SchedData* ps, int pssize) {
     //Prompt for tTime quantum
 
     while(quant < 1){
-        cout << "What would you like your base tTime quantum to be?";
-            getline(cin, inp);
+        cout << "What would you like your base tTime quantum to be?" << endl;
+        cin >> inp;
+
         if(readIsInt(inp)){//parse the int
             quant = stoi(inp);
         }
@@ -288,8 +289,8 @@ void mfqs(SchedData* ps, int pssize) {
 	
 	//Prompt for aging tTime
     while(agelim < 1){
-        cout << "How long should the processes in the last queue age for? We recommend 100 as a good base.";
-        getline(cin, inp);
+        cout << "How long should the processes in the last queue age for? We recommend 100 as a good base." << endl;
+        cin >> inp;
         if(readIsInt(inp)){//parse the int
         agelim = stoi(inp);
         }
@@ -484,6 +485,8 @@ void rts(SchedData* ps, int pssize) {
     int dataTrip = 0;
     float preCalc;
     int trackCalc = 0;
+    int trackNumOFComp = 0;
+    double waitT = 0, turT = 0;
 
 
     //Get user in for what type of Real time schedueler it is
@@ -548,15 +551,17 @@ void rts(SchedData* ps, int pssize) {
                     //soft so if deadline not met print out failed process and continue
                     cout << "Schedueler failed on process: " << ps[psLocation].P_ID << " Clock time = "  << time << " Deadline = " << ps[psLocation].Deadline << endl;
                     psLocation++;
-                    trackCalc =0;
+                    trackCalc = 0;
                     dataTrip = 0;
+                    ps[psLocation].WaitTime = 0;
                     continue;
                 }else{
                     //hard so "Crash" Program and get out telling the user what process failed
                     cout << "Schedueler failed on process: " << ps[psLocation].P_ID << endl;
                     cout << "Clock time = "  << time << " Deadline = " << ps[psLocation].Deadline << endl;
+                    ps[psLocation].WaitTime = 0;
                     cout << "EXIT......" << endl;
-                    return;
+                    break;
                 }
             }
 
@@ -568,6 +573,10 @@ void rts(SchedData* ps, int pssize) {
             // use to see if we have already checked data so we dont always have to do the calculations for good data
             dataTrip = 0;
             trackCalc = 0;
+            trackNumOFComp++;
+            ps[psLocation].tat = time - ps[psLocation].Arrival;
+            ps[psLocation].WaitTime = ps[psLocation].tat - ps[psLocation].Burst; //wait tTime.. we found this manually
+
             //move to next process to work on
             cout << "moving to next data set" << endl;
             psLocation++;
@@ -575,6 +584,17 @@ void rts(SchedData* ps, int pssize) {
         //iterate time
         time++;
     }
+
+    for ( i = 0; i < pssize; i++){
+        waitT += ps[psLocation].WaitTime;
+        turT += ps[psLocation].tat;
+    }
+    waitT /= trackNumOFComp;
+    turT /= trackNumOFComp;
+    
         cout << "End of Real Time Schedueler" << endl;
+        cout << "Average Wait Time: " << waitT << endl;
+        cout << "Average Turn Around Time: " << turT << endl;
+        cout << "Total number of completed processes: " << trackNumOFComp << endl;
         return;
 }
