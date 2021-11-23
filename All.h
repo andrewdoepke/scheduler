@@ -362,6 +362,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 		}
 		
 		
+		/*
 		//handle ageing in last queue
 		if(queues[qnum - 1].size() > 0){
 			for(j = 0; j < queues[qnum-1].size(); j++){ //promote last queue if waiting for a while
@@ -377,7 +378,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 				}
 			}
 		}
-		
+		*/
 		//current running process
 		if(runningP) { //something is running
 			t.BurstCalc++; //burst a tick
@@ -395,7 +396,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 				
                 eventTracker.push_back(t); //on completion, save data for this run
 				
-				if(queues[0].size() == 0 && currPInd >= pssize-1){ //check for completion
+				if(currPInd >= pssize-1 && queues[0].size() == 0){ //check for completion
 					done = true; //done is true if the following don't pass
 					for(int w = 1; w < qnum; w++){ //make sure all queues are empty
 						if(queues[w].size() > 0){
