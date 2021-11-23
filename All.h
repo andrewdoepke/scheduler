@@ -563,9 +563,14 @@ void rts(SchedData* ps, int pssize, bool debug) {
            current_time->tm_sec);
 
     for ( i = 0; i < pssize; i++){
-        waitT += ps[psLocation].WaitTime;
-        turT += ps[psLocation].tat;
+        //Check if we have bad data
+        if(dataTrip == 0 && (ps[i].Arrival < 0 || ps[i].Burst < 1 || ps[i].Deadline < 1 )){
+            continue;
+        }
+        waitT += ps[i].WaitTime;
+        turT += ps[i].tat;
     }
+
     waitT /= trackNumOFComp;
     turT /= trackNumOFComp;
     
