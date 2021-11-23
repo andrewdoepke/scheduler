@@ -69,8 +69,8 @@ void printCalcs(que events, int s){
 	awt /= s;
 	att /= s;
 	
-	cout << "\nAverage Wait Time: " + to_string(awt) << endl;
-	cout << "Average Turn Around Time: " + to_string(att) << endl;
+	cout << "\nAverage Wait time: " + to_string(awt) << endl;
+	cout << "Average Turn Around time: " + to_string(att) << endl;
 	cout << "Total number of scheduled processes: " + to_string(s) + "\n" << endl; 
 }
 
@@ -210,7 +210,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 		#undef DEBUG
 	}
 	
-	int tTime = 0; //Time counter
+	int tTime = 0; //tTime counter
 	int actS = pssize;
     
     que eventTracker; //que to hold all events for use in gantt chart. Stores in order each completion or partial completion.
@@ -287,7 +287,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 	
 	while(!done){
 		#ifdef DEBUG
-		cout << "Time: " + to_string(tTime) << endl;
+		cout << "tTime: " + to_string(tTime) << endl;
 		#endif
 		
 		if(currPInd < pssize){ //if there are still things to be queued
@@ -307,7 +307,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 					}; //find last index of duplicate arrival. This should increment currInd
 					
 					if(ps[currPInd + 1].Priority > ps[currPInd].Priority){
-						for(i = currPInd; i < currInd - 1; i++){ //bubble sort the small subset of duplicate arrivals by priority. Generally speaking this will be good, unless all processes have the same arrivals in which case it will take a while to sort the one time.
+						for(i = currPInd; i < currInd - 1; i++){ //bubble sort the small subset of duplicate arrivals by priority. Generally speaking this will be good, unless all processes have the same arrivals in which case it will take a while to sort the one tTime.
 							for(j = currPInd; j < (currInd - 1 - i); j++){
 								if(ps[j].Priority < ps[j+1].Priority){
 									t = ps[j];
@@ -320,22 +320,22 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 					
 					while(currPInd <= currInd){ //queue all duplicate arrivals in order
 						ps[currPInd].BurstCalc = 0; //set burst calc
-						ps[currPInd].WaitTime = 0; //set wait time
+						ps[currPInd].WaitTime = 0; //set Wait Time
 						queues[0].push_back(ps[currPInd]); //queue it
 						
 						#ifdef DEBUG
-						cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at time " + std::to_string(ps[currPInd].Arrival) << endl;
+						cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at tTime " + std::to_string(ps[currPInd].Arrival) << endl;
 						#endif
 						
 						currPInd++; //increment
 					}
 				} else {// end duplicate check. Do normally if no dups
 					ps[currPInd].BurstCalc = 0; //set burst calc
-					ps[currPInd].WaitTime = 0; //set wait time
+					ps[currPInd].WaitTime = 0; //set Wait Time
 					queues[0].push_back(ps[currPInd]); //queue it
 					
 					#ifdef DEBUG
-					cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at time " + std::to_string(ps[currPInd].Arrival) << endl;
+					cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at tTime " + std::to_string(ps[currPInd].Arrival) << endl;
 					#endif
 					
 					currPInd++; //increment
@@ -365,8 +365,8 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 		//handle ageing in last queue
 		if(queues[qnum - 1].size() > 0){
 			for(j = 0; j < queues[qnum-1].size(); j++){ //promote last queue if waiting for a while
-				temptat = tTime - queues[qnum-1][j].Arrival; //get turnaround time (partial)
-				if(temptat - queues[qnum-1][j].BurstCalc > agelim){ //calculate current wait time and see if it is too much
+				temptat = tTime - queues[qnum-1][j].Arrival; //get turnaround tTime (partial)
+				if(temptat - queues[qnum-1][j].BurstCalc > agelim){ //calculate current Wait Time and see if it is too much
 				
 					#ifdef DEBUG 
 					cout << "Promoting process " + to_string(queues[qnum - 1][j].P_ID) + "." << endl;
@@ -384,13 +384,13 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 			
 			if(t.BurstCalc > t.Burst){ //t has finished running!
 				t.completion = tTime; //save completion tTime
-                t.tat = t.completion - t.Arrival; //turn around time
+                t.tat = t.completion - t.Arrival; //turn around tTime
                 t.WaitTime = t.tat - t.Burst; //wait time.. we found this manually
 				t.finishQ = currQ; //save finish queue
                 runningP = false;
 				
 				#ifdef DEBUG
-				std::cout << "Finished process " + std::to_string(t.P_ID) + " in queue " + to_string(currQ) + " at time " + to_string(tTime) << endl;
+				std::cout << "Finished process " + std::to_string(t.P_ID) + " in queue " + to_string(currQ) + " at tTime " + to_string(tTime) << endl;
 				#endif
 				
                 eventTracker.push_back(t); //on completion, save data for this run
@@ -427,7 +427,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 		} //end running calculations
 			
 		tTime++; //increment tTime
-	} //end time simulation
+	} //end tTime simulation
 	
 	cout << "Done!!" << endl;
 	s = time(NULL);
@@ -447,7 +447,7 @@ void rts(SchedData* ps, int pssize) {
     string userIn;
     int hardOrSoft = -1;
     int psLocation = 0, i, j;
-    int time = 0;
+    int tTime = 0;
     int dataTrip = 0;
     float preCalc;
     int trackCalc = 0;
@@ -455,29 +455,21 @@ void rts(SchedData* ps, int pssize) {
     double waitT = 0, turT = 0;
 
 
-    //Get user in for what type of Real time schedueler it is
+    //Get user in for what type of Real tTime schedueler it is
     while(hardOrSoft < 0 || hardOrSoft > 1){
-        cout << "Please enter 0 for a soft real time schedueler or 1 for a hard real time schedueler\n";
+        cout << "Please enter 0 for a soft real time scheduler, or 1 for a hard real time scheduler\n";
         cin >> userIn;
         if(readIsInt(userIn)){
             hardOrSoft = stoi(userIn);
         } if(hardOrSoft < 0 || hardOrSoft > 1)
-            cout << "Invalid input please try again:\n";
+            cout << "Invalid input! Please try again, or press CTR-C to quit.\n";
     }
     
     mergeSortWithSlack(ps, 0, pssize-1);
 
-
-    /* test how data is sorted
-   while(psLocation < pssize){
-       cout << "P_ID: " << ps[psLocation].P_ID << " Arrival: " << ps[psLocation].Arrival << " Deadline: " << ps[psLocation].Deadline << " Burst: " << ps[psLocation].Burst << endl;
-       psLocation++;
-   }*/
-   
-
    cout << endl;
    psLocation = 0;
-    //time = ps[psLocation].Arrival;
+    //tTime = ps[psLocation].Arrival;
     //loop to run through data
 	
 	time_t s, val = 1;
@@ -507,19 +499,16 @@ void rts(SchedData* ps, int pssize) {
             continue;
         }
 
-        //if(((int)(((float)(psLocation/pssize)) * 100)) % 10  == 0)
-        //    cout << "Data is: " << (((psLocation/pssize) * 100)) << "% processed" << endl;
-
         //trip we have checked this data
         dataTrip = 1;
 
         //Check if we have arrived at working process
-        if(ps[psLocation].Arrival <= time){
+        if(ps[psLocation].Arrival <= tTime){
             //determin what to do if we have surpassed deadline
-            if(ps[psLocation].Deadline <= time){
+            if(ps[psLocation].Deadline <= tTime){
                 if(hardOrSoft == 0){
                     //soft so if deadline not met print out failed process and continue
-                    cout << "Schedueler failed on process: " << ps[psLocation].P_ID << " Clock time = "  << time << " Deadline = " << ps[psLocation].Deadline << endl;
+                    cout << "Scheduler failed on process: " << ps[psLocation].P_ID << " Clock Time = "  << tTime << " Deadline = " << ps[psLocation].Deadline << endl;
                     psLocation++;
                     trackCalc = 0;
                     dataTrip = 0;
@@ -527,8 +516,8 @@ void rts(SchedData* ps, int pssize) {
                     continue;
                 }else{
                     //hard so "Crash" Program and get out telling the user what process failed
-                    cout << "Schedueler failed on process: " << ps[psLocation].P_ID << endl;
-                    cout << "Clock time = "  << time << " Deadline = " << ps[psLocation].Deadline << endl;
+                    cout << "Scheduler failed on process: " << ps[psLocation].P_ID << endl;
+                    cout << "Clock tTime = "  << tTime << " Deadline = " << ps[psLocation].Deadline << endl;
                     ps[psLocation].WaitTime = 0;
                     cout << "EXIT......" << endl;
                     break;
@@ -544,15 +533,15 @@ void rts(SchedData* ps, int pssize) {
             dataTrip = 0;
             trackCalc = 0;
             trackNumOFComp++;
-            ps[psLocation].tat = time - ps[psLocation].Arrival;
+            ps[psLocation].tat = tTime - ps[psLocation].Arrival;
             ps[psLocation].WaitTime = ps[psLocation].tat - ps[psLocation].Burst; //wait tTime.. we found this manually
 
             //move to next process to work on
             //cout << "moving to next data set" << endl;
             psLocation++;
         }
-        //iterate time
-        time++;
+        //iterate tTime
+        tTime++;
     }
 	
 	cout << "Done!!" << endl;
@@ -570,9 +559,9 @@ void rts(SchedData* ps, int pssize) {
     waitT /= trackNumOFComp;
     turT /= trackNumOFComp;
     
-        cout << "End of Real Time Schedueler" << endl;
+        cout << "End of Real tTime Schedueler" << endl;
         cout << "Average Wait Time: " << waitT << endl;
-        cout << "Average Turn Around Time: " << turT << endl;
+        cout << "Average Turn Around tTime: " << turT << endl;
         cout << "Total number of completed processes: " << trackNumOFComp << endl;
         return;
 }
