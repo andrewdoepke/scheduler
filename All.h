@@ -278,7 +278,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
     struct tm* current_time;
     s = time(NULL);
     current_time = localtime(&s);
-    printf("Started running at %02d:%02d:%02d\n",
+    printf("\nStarted running at %02d:%02d:%02d\n",
            current_time->tm_hour,
            current_time->tm_min,
            current_time->tm_sec);
@@ -362,7 +362,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 		}
 		
 		
-		/*
+		
 		//handle ageing in last queue
 		if(queues[qnum - 1].size() > 0){
 			for(j = 0; j < queues[qnum-1].size(); j++){ //promote last queue if waiting for a while
@@ -378,7 +378,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 				}
 			}
 		}
-		*/
+		
 		//current running process
 		if(runningP) { //something is running
 			t.BurstCalc++; //burst a tick
