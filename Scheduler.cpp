@@ -261,7 +261,7 @@ int main() {
          break;
       case 1:
          //run rts
-         rts(schedDataPtr, schedSize);
+         rts(schedDataPtr, schedSize, debug);
          break;
       default:
          return 0; //quit program
