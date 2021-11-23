@@ -282,29 +282,28 @@ void mfqs(SchedData* ps, int pssize) {
 	
 	bool runningP = false; //store if process is currently running
 	
-	//que IO;
-	
 	bool done = false;
 	
 	while(!done){
 		cout << "Time: " + to_string(tTime) << endl;
 		
-		if(currPInd < pssize){
-			if(isValid(ps[currPInd]) == false){
+		if(currPInd < pssize){ //if there are still things to be queued
+			if(isValid(ps[currPInd]) == false){ //validate
 				currPInd++;
 				actS--;
 				continue;
 			}
+			
 			if(ps[currPInd].Arrival == tTime){ //hit a process
-				//cout << "Hit" << endl;
-				//return eventTracker;
 			
 				//handle duplicate arrivals
-				if(ps[currPInd + 1].Arrival == tTime){ //if there is a duplicate, find duplicates and sort subset by priority
+				if(ps[currPInd + 1].Arrival == tTime && ps[currPInd + 1].Priority > ps[currPInd].Priority){ //if there is a duplicate, find duplicates and sort subset by priority. Only sorts a subset once if it needs sorting
 					currInd = currPInd;
-					while(ps[currInd++].Arrival == tTime); //find last index of duplicate arrival. This should increment currInd
+					while(ps[currInd].Arrival == tTime){
+						currInd++;
+					}; //find last index of duplicate arrival. This should increment currInd
 					
-					for(i = currPInd; i < currInd - 1; i++){
+					for(i = currPInd; i < currInd - 1; i++){ //bubble sort the small subset of duplicate arrivals by priority. Generally speaking this will be good, unless all processes have the same arrivals in which case it will take a while to sort the one time.
 						for(j = currPInd; j < (currInd - 1 - i); j++){
 							if(ps[j].Priority < ps[j+1].Priority){
 								t = ps[j];
@@ -321,7 +320,7 @@ void mfqs(SchedData* ps, int pssize) {
 						cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at time " + std::to_string(ps[currPInd].Arrival) << endl;
 						currPInd++; //increment
 					}
-				} else {// end duplicate check. Do normally
+				} else {// end duplicate check. Do normally if no dups
 					ps[currPInd].BurstCalc = 0; //set burst calc
 					ps[currPInd].WaitTime = 0; //set wait time
 					queues[0].push_back(ps[currPInd]); //queue it
@@ -330,6 +329,7 @@ void mfqs(SchedData* ps, int pssize) {
 				}
 			}//process is now queued..
 		}
+		
 		if(!runningP){ //queue next process if nothing is running
 			currQuant = quant; //divide by 2 since it will be multiplied again
 			for(i = 0; i < qnum; i++){ //pull from highest queue
@@ -345,22 +345,24 @@ void mfqs(SchedData* ps, int pssize) {
 					
 					break; //break out of for loop
 				}
-			}//exit for loop.
+			} //exit for loop.
 		}
 		
 		
+		//handle ageing in last queue
 		if(queues[qnum - 1].size() > 0){
 			for(j = 0; j < queues[qnum-1].size(); j++){ //promote last queue if waiting for a while
 				temptat = tTime - queues[qnum-1][j].Arrival; //get turnaround time (partial)
-				if(temptat - queues[qnum-1][j].BurstCalc >= agelim){ //calculate current wait time and see if it is too much
+				if(temptat - queues[qnum-1][j].BurstCalc > agelim){ //calculate current wait time and see if it is too much
 					queues[qnum - 2].push_back(queues[qnum - 1][j]); //promote to above queue
 					queues[qnum - 1].erase(queues[qnum - 1].begin() + j); //get rid of it from previous queue
 				}
 			}
 		}
+		
+		//current running process
 		if(runningP) { //something is running
 			t.BurstCalc++; //burst a tick
-			//cout << "Burst: " + to_string(t.BurstCalc) << endl;
 			
 			if(t.BurstCalc > t.Burst){ //t has finished running!
 				t.completion = tTime; //save completion tTime
@@ -370,13 +372,12 @@ void mfqs(SchedData* ps, int pssize) {
                 runningP = false;
 				
 				std::cout << "Finished process " + std::to_string(t.P_ID) + " in queue " + to_string(currQ) + " at time " + to_string(tTime) << endl;
-				//return;
 
                 eventTracker.push_back(t); //on completion, save data for this run
 				
 				if(queues[0].size() == 0 && currPInd >= pssize-1){ //check for completion
-					done = true;
-					for(int w = 1; w < qnum; w++){
+					done = true; //done is true if the following don't pass
+					for(int w = 1; w < qnum; w++){ //make sure all queues are empty
 						if(queues[w].size() > 0){
 							done = false;
 						}
@@ -385,9 +386,8 @@ void mfqs(SchedData* ps, int pssize) {
 				
 			} else {
 				//has not finished running :(
-				
-				
-				if(t.IO > 0 && t.BurstCalc == t.Burst - 1){ //I/O at tick before the process ends if io is done
+		
+				if(t.IO > 0 && t.BurstCalc == t.Burst - 1){ //I/O at tick before the process ends if io is needed
 					//queue in the top to finish process
 					t.IO--;
 					queues[0].push_back(t);//add to end of first queue
@@ -405,7 +405,7 @@ void mfqs(SchedData* ps, int pssize) {
 		} //end running calculations
 			
 		tTime++; //increment tTime
-	}
+	} //end time simulation
 	
 	cout << "Done!!" << endl;
 	
@@ -413,11 +413,6 @@ void mfqs(SchedData* ps, int pssize) {
 	
     //we're done now. 
 }
-/*
-void fcfs(que* queue){
-
-}   
-*/
 
 void rts(SchedData* ps, int pssize) {
     struct SchedData t;
@@ -441,18 +436,6 @@ void rts(SchedData* ps, int pssize) {
         } if(hardOrSoft < 0 || hardOrSoft > 1)
             cout << "Invalid input please try again:\n";
     }
-
-    /*sort SchedData array by SlackTime
-   for(i = 0; i < pssize - 1; i++){
-      for(j = 0; j < (pssize - 1 - i); j++){
-         if(ps[j].Arrival > ps[j+1].Arrival){
-            t = ps[j];
-            ps[j] = ps[j + 1];
-            ps[j+1] = t;
-         }
-      }
-   }
-   */
     
     mergeSortWithSlack(ps, 0, pssize-1);
 
