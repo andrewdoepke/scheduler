@@ -111,10 +111,11 @@ void fileData(SchedData *schedualerDataPtr, string fileName){
    int i = 0;
    fstream ifile;
    std::string unused;
+   
+   cout << "Loading..." << endl;
 
    ifile.open(fileName);
 
-	cout << "Loading..." << endl;
    while(std::getline(ifile, unused)){
       if(isFirstLine){
          isFirstLine = false;

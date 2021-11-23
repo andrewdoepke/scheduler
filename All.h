@@ -160,13 +160,14 @@ void mfqs(SchedData* ps, int pssize) {
 	
 	bool done = false;
 	
-	while(currPInd < pssize){
+	while(!done){
 		cout << "Time: " + to_string(tTime) << endl;
 		
 		if(currPInd < pssize){
 			if(isValid(ps[currPInd]) == false){
 				currPInd++;
 				actS--;
+				continue;
 			}
 			if(ps[currPInd].Arrival == tTime){ //hit a process
 				//cout << "Hit" << endl;
@@ -186,13 +187,21 @@ void mfqs(SchedData* ps, int pssize) {
 							}
 						}
 					}
-				}// end duplicate check. 
-				
-				ps[currPInd].BurstCalc = 0; //set burst calc
-				ps[currPInd].WaitTime = 0; //set wait time
-				queues[0].push_back(ps[currPInd]); //queue it
-				cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at time " + std::to_string(ps[currPInd].Arrival) << endl;
-				currPInd++; //increment
+					
+					while(currPInd <= currInd){
+						ps[currPInd].BurstCalc = 0; //set burst calc
+						ps[currPInd].WaitTime = 0; //set wait time
+						queues[0].push_back(ps[currPInd]); //queue it
+						cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at time " + std::to_string(ps[currPInd].Arrival) << endl;
+						currPInd++; //increment
+					}
+				} else {// end duplicate check. Do normally
+					ps[currPInd].BurstCalc = 0; //set burst calc
+					ps[currPInd].WaitTime = 0; //set wait time
+					queues[0].push_back(ps[currPInd]); //queue it
+					cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at time " + std::to_string(ps[currPInd].Arrival) << endl;
+					currPInd++; //increment
+				}
 			}//process is now queued..
 		}
 		if(!runningP){ //queue next process if nothing is running
@@ -240,13 +249,24 @@ void mfqs(SchedData* ps, int pssize) {
 
                 eventTracker.push_back(t); //on completion, save data for this run
 				
+				if(queues[0].size() == 0 && currPInd >= pssize-1){
+					done = true;
+					for(int w = 1; w < qnum; w++){
+						if(queues[w].size() > 0){
+							done = false;
+						}
+					}
+				}
+				
 			} else {
 				//has not finished running :(
 				
 				
 				if(t.IO > 0 && t.BurstCalc == t.Burst - 1){ //I/O at tick before the process ends if io is done
 					//queue in the top to finish process
+					t.IO--;
 					queues[0].push_back(t);//add to end of first queue
+					runningP = false;
 					
 				} else if(currQ != qnum - 1){ //RR Queues demote?
 					if(t.BurstCalc > currQuant){ //process has went over quantum, demote... 
