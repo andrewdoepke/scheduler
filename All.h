@@ -27,10 +27,10 @@ struct SchedData{
    int finishQ;
 };
 
-typedef std::vector<SchedData> que; //a que is a vector of SchedData items
-typedef std::vector<que> QueueArr; //Define Queue Array (dynamically allocating)
+typedef vector<SchedData> que; //a que is a vector of SchedData items
+typedef vector<que> QueueArr; //Define Queue Array (dynamically allocating)
 
-bool readIsInt(std::string input){
+bool readIsInt(string input){
    for(int i = 0; i < input.length(); i++){
       if(isdigit(input[i]) == false)
          return false;
@@ -442,7 +442,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
     //we're done now. 
 }
 
-void rts(SchedData* ps, int pssize) {
+void rts(SchedData* ps, int pssize, bool debug) {
     struct SchedData t;
     string userIn;
     int hardOrSoft = -1;
@@ -453,6 +453,10 @@ void rts(SchedData* ps, int pssize) {
     int trackCalc = 0;
     int trackNumOFComp = 0;
     double waitT = 0, turT = 0;
+
+    if(!debug){
+		#undef DEBUG
+	}
 
 
     //Get user in for what type of Real time schedueler it is
@@ -481,7 +485,7 @@ void rts(SchedData* ps, int pssize) {
     //loop to run through data
     while(psLocation < pssize){
         preCalc = (psLocation * 100)/ pssize;
-        if((((int)(preCalc)) % 10) == 0 && trackCalc == 0){
+        if(trackCalc == 0 && (((int)(preCalc)) % 10) == 0){
             cout << preCalc << "% of the way done" << endl;
             trackCalc = 1;
         }
@@ -489,14 +493,13 @@ void rts(SchedData* ps, int pssize) {
 
         //Check if we have bad data if so pass over
         if(dataTrip == 0 && (ps[psLocation].Arrival < 0 || ps[psLocation].Burst < 1 || ps[psLocation].Deadline < 1 )){
-            //cout << "Process bad data: " << ps[psLocation].P_ID << endl;  
+            #ifdef DEBUG
+            cout << "Process bad data: " << ps[psLocation].P_ID << endl;  
+            #endif
             psLocation++;
             trackCalc = 0;
             continue;
         }
-
-        //if(((int)(((float)(psLocation/pssize)) * 100)) % 10  == 0)
-        //    cout << "Data is: " << (((psLocation/pssize) * 100)) << "% processed" << endl;
 
         //trip we have checked this data
         dataTrip = 1;
@@ -507,7 +510,9 @@ void rts(SchedData* ps, int pssize) {
             if(ps[psLocation].Deadline <= time){
                 if(hardOrSoft == 0){
                     //soft so if deadline not met print out failed process and continue
+                    #ifdef DEBUG
                     cout << "Schedueler failed on process: " << ps[psLocation].P_ID << " Clock time = "  << time << " Deadline = " << ps[psLocation].Deadline << endl;
+                    #endif
                     psLocation++;
                     trackCalc = 0;
                     dataTrip = 0;
@@ -536,7 +541,9 @@ void rts(SchedData* ps, int pssize) {
             ps[psLocation].WaitTime = ps[psLocation].tat - ps[psLocation].Burst; //wait tTime.. we found this manually
 
             //move to next process to work on
-            //cout << "moving to next data set" << endl;
+            #ifdef DEBUG
+            cout << "moving to next data set" << endl;
+            #endif
             psLocation++;
         }
         //iterate time
