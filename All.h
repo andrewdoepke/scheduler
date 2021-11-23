@@ -1,4 +1,4 @@
-#define DEBUG
+//#define DEBUG
 //#define FINALPRINT
 
 #include <iostream>
@@ -206,9 +206,6 @@ void mergeSortWithSlack(SchedData *array, int const begin, int const end)
 
 
 void mfqs(SchedData* ps, int pssize, bool debug) {
-	if(!debug){
-		#undef DEBUG
-	}
 	
 	int tTime = 0; //tTime counter
 	int actS = pssize;
@@ -286,9 +283,10 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 	cout << "Running simulation..." << endl;
 	
 	while(!done){
-		#ifdef DEBUG
-		cout << "tTime: " + to_string(tTime) << endl;
-		#endif
+
+		if(debug)
+			cout << "Time: " + to_string(tTime) << endl;
+		
 		
 		if(currPInd < pssize){ //if there are still things to be queued
 			if(isValid(ps[currPInd]) == false){ //validate
@@ -323,9 +321,8 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 						ps[currPInd].WaitTime = 0; //set Wait Time
 						queues[0].push_back(ps[currPInd]); //queue it
 						
-						#ifdef DEBUG
-						cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at tTime " + std::to_string(ps[currPInd].Arrival) << endl;
-						#endif
+						if(debug)
+							cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at tTime " + std::to_string(ps[currPInd].Arrival) << endl;
 						
 						currPInd++; //increment
 					}
@@ -334,9 +331,8 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 					ps[currPInd].WaitTime = 0; //set Wait Time
 					queues[0].push_back(ps[currPInd]); //queue it
 					
-					#ifdef DEBUG
-					cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at tTime " + std::to_string(ps[currPInd].Arrival) << endl;
-					#endif
+					if(debug)
+						cout << "PID " + std::to_string(ps[currPInd].P_ID) + " arrived at tTime " + std::to_string(ps[currPInd].Arrival) << endl;
 					
 					currPInd++; //increment
 				}
@@ -369,9 +365,9 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 				temptat = tTime - queues[qnum-1][j].Arrival; //get turnaround tTime (partial)
 				if(temptat - queues[qnum-1][j].BurstCalc > agelim){ //calculate current Wait Time and see if it is too much
 				
-					#ifdef DEBUG 
-					cout << "Promoting process " + to_string(queues[qnum - 1][j].P_ID) + "." << endl;
-					#endif
+					if(debug)
+						cout << "Promoting process " + to_string(queues[qnum - 1][j].P_ID) + "." << endl;
+
 					
 					queues[qnum - 2].push_back(queues[qnum - 1][j]); //promote to above queue
 					queues[qnum - 1].erase(queues[qnum - 1].begin() + j); //get rid of it from previous queue
@@ -390,9 +386,9 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 				t.finishQ = currQ; //save finish queue
                 runningP = false;
 				
-				#ifdef DEBUG
-				std::cout << "Finished process " + std::to_string(t.P_ID) + " in queue " + to_string(currQ) + " at tTime " + to_string(tTime) << endl;
-				#endif
+				if(debug)
+					std::cout << "Finished process " + std::to_string(t.P_ID) + " in queue " + to_string(currQ) + " at tTime " + to_string(tTime) << endl;
+
 				
                 eventTracker.push_back(t); //on completion, save data for this run
 				
@@ -416,9 +412,9 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 					
 				} else if(currQ != qnum - 1){ //RR Queues demote?
 					if(t.BurstCalc > currQuant){ //process has went over quantum, demote... 
-						#ifdef DEBUG
-						cout << "Demoting process " + to_string(t.P_ID) + " down a queue." << endl;
-						#endif
+						if(debug)
+							cout << "Demoting process " + to_string(t.P_ID) + " down a queue." << endl;
+
 						queues[currQ + 1].push_back(t);
 						runningP = false;
 					} //else.. Hasn't gone over yet! Keep running...
