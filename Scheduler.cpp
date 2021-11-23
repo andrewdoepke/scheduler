@@ -177,7 +177,7 @@ int main() {
       inputStr = removeWhiteSpace(inputStr);
       
       if(!(inputStr == "yes" || inputStr == "no"))
-         std::cout << "That was an invalid input please try again" << endl;
+         cout << "Error! Invalid input. Please try again or CTR-C to quit." << endl;
    }
    
    if(inputStr == "yes"){
@@ -190,10 +190,10 @@ int main() {
 
       ifile.open(fileName);
          if(!ifile.fail()) {
-            std::cout << "file exists" << endl;
+            std::cout << "File exists!" << endl;
             isFile = true;
          }else {
-            std::cout << "file doesn't exist" << endl;
+            std::cout << "File doesn't exist!" << endl;
          }
       }
 
@@ -221,15 +221,32 @@ int main() {
    //std::cout << inputStr << endl;
 
    while(choice < 0 || choice > 1){
-      cout << "Would you like to run MFQS or RTS? 0 for MFQS, 1 for RTS, anything else to exit." << endl;
+      cout << "Would you like to run MFQS or RTS? 0 for MFQS, 1 for RTS" << endl;
       cin >> inputStr;
       if(readIsInt(inputStr)){
          choice = stoi(inputStr);
       }
       if(choice < 0 || choice > 1){
-         cout << "Error incalid input please try again" << endl;
+         cout << "Error! Invalid input. Please try again or CTR-C to quit." << endl;
       }
-   }
+	}
+   
+	int d = -1;
+	while(d < 0 || d > 1){
+		cout << "Would you like to turn debugging on? 0 for no, 1 for yes." << endl;
+		cin >> inputStr;
+		if(readIsInt(inputStr)){
+		 d = stoi(inputStr);
+		}
+		if(d < 0 || d > 1){
+		 cout << "Error! Invalid input. Please try again or CTR-C to quit." << endl;
+		}
+	}
+	
+	bool debug = false;
+	if(d == 1){
+		debug = true;
+	}
    
    /*
   for(int i = 0; i < (schedSize); i++)
@@ -240,7 +257,7 @@ int main() {
    switch(choice){
       case 0:
          //run mfqs
-         mfqs(schedDataPtr, schedSize);
+         mfqs(schedDataPtr, schedSize, debug);
          break;
       case 1:
          //run rts
