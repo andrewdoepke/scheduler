@@ -8,6 +8,7 @@
 #include <sstream>
 #include <queue>
 #include <vector>
+#include <cstdio>
 
 using namespace std;
 
@@ -273,6 +274,17 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 	
 	bool done = false;
 	
+    time_t s, val = 1;
+    struct tm* current_time;
+    s = time(NULL);
+    current_time = localtime(&s);
+    printf("Started running at %02d:%02d:%02d\n",
+           current_time->tm_hour,
+           current_time->tm_min,
+           current_time->tm_sec);
+		   
+	cout << "Running simulation..." << endl;
+	
 	while(!done){
 		#ifdef DEBUG
 		cout << "Time: " + to_string(tTime) << endl;
@@ -418,6 +430,12 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 	} //end time simulation
 	
 	cout << "Done!!" << endl;
+	s = time(NULL);
+    current_time = localtime(&s);
+    printf("Finished running at %02d:%02d:%02d\n",
+           current_time->tm_hour,
+           current_time->tm_min,
+           current_time->tm_sec);
 	
 	printCalcs(eventTracker, actS);
 	
