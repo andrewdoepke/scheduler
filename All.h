@@ -439,13 +439,17 @@ void rts(SchedData* ps, int pssize) {
     
     mergeSortWithSlack(ps, 0, pssize-1);
 
+
+    /* test how data is sorted
    while(psLocation < pssize){
        cout << "P_ID: " << ps[psLocation].P_ID << " Arrival: " << ps[psLocation].Arrival << " Deadline: " << ps[psLocation].Deadline << " Burst: " << ps[psLocation].Burst << endl;
        psLocation++;
-   }
+   }*/
+   
+
    cout << endl;
    psLocation = 0;
-    time = ps[psLocation].Arrival;
+    //time = ps[psLocation].Arrival;
     //loop to run through data
     while(psLocation < pssize){
         preCalc = (psLocation * 100)/ pssize;
@@ -457,7 +461,7 @@ void rts(SchedData* ps, int pssize) {
 
         //Check if we have bad data if so pass over
         if(dataTrip == 0 && (ps[psLocation].Arrival < 0 || ps[psLocation].Burst < 1 || ps[psLocation].Deadline < 1 )){
-            cout << "process bad data: " << ps[psLocation].P_ID << endl;  
+            //cout << "Process bad data: " << ps[psLocation].P_ID << endl;  
             psLocation++;
             trackCalc = 0;
             continue;
@@ -504,7 +508,7 @@ void rts(SchedData* ps, int pssize) {
             ps[psLocation].WaitTime = ps[psLocation].tat - ps[psLocation].Burst; //wait tTime.. we found this manually
 
             //move to next process to work on
-            cout << "moving to next data set" << endl;
+            //cout << "moving to next data set" << endl;
             psLocation++;
         }
         //iterate time
