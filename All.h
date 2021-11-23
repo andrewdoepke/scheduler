@@ -303,18 +303,10 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 	cout << "Running simulation..." << endl;
 	
 	while(!done){
-<<<<<<< Updated upstream
 
 		if(debug)
 			cout << "Time: " + to_string(tTime) << endl;
 		
-=======
-       if(!debug)
-        printProgress(((double)psLocation)/((double)pssize));
-		#ifdef DEBUG
-		cout << "tTime: " + to_string(tTime) << endl;
-		#endif
->>>>>>> Stashed changes
 		
 		if(currPInd < pssize){ //if there are still things to be queued
 			if(isValid(ps[currPInd]) == false){ //validate
@@ -457,7 +449,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
     if(!debug)
         printProgress(((double)psLocation)/((double)pssize));
 	
-	cout << "Done!!" << endl;
+	cout << endl << "Done!!" << endl;
 	s = time(NULL);
     current_time = localtime(&s);
     printf("Finished running at %02d:%02d:%02d\n",
@@ -488,10 +480,6 @@ void rts(SchedData* ps, int pssize, bool debug) {
     }
     
 
-<<<<<<< Updated upstream
-=======
-
->>>>>>> Stashed changes
 
     //Get user in for what type of Real time schedueler it is
     while(hardOrSoft < 0 || hardOrSoft > 1){
@@ -601,7 +589,7 @@ void rts(SchedData* ps, int pssize, bool debug) {
     if(!debug)
         printProgress(((double)psLocation)/((double)pssize));
 	
-	cout << "Done!!" << endl;
+	cout << endl << "Done!!" << endl;
 	s = time(NULL);
     current_time = localtime(&s);
     printf("Finished running at %02d:%02d:%02d\n",
