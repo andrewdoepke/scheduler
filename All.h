@@ -323,6 +323,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 						currInd++;
 					}; //find last index of duplicate arrival. This should increment currInd
 					
+					
 					if(ps[currPInd + 1].Priority > ps[currPInd].Priority){
 						for(i = currPInd; i < currInd - 1; i++){ //bubble sort the small subset of duplicate arrivals by priority. Generally speaking this will be good, unless all processes have the same arrivals in which case it will take a while to sort the one tTime.
 							for(j = currPInd; j < (currInd - 1 - i); j++){
@@ -379,16 +380,18 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 		
 		
 		//handle ageing in last queue
-		if(queues[qnum - 1].size() > 0){
-			for(j = 0; j < queues[qnum-1].size(); j++){ //promote last queue if waiting for a while
-				temptat = tTime - queues[qnum-1][j].Arrival; //get turnaround tTime (partial)
-				if(temptat - queues[qnum-1][j].BurstCalc > agelim){ //calculate current Wait Time and see if it is too much
-				
-					if(debug)
-						cout << "Promoting process " + to_string(queues[qnum - 1][j].P_ID) + "." << endl;
+		if(tTime % agelim == 0){
+			if(queues[qnum - 1].size() > 0){
+				for(j = 0; j < queues[qnum-1].size(); j++){ //promote last queue if waiting for a while
+					temptat = tTime - queues[qnum-1][j].Arrival; //get turnaround tTime (partial)
+					if(temptat - queues[qnum-1][j].BurstCalc > agelim){ //calculate current Wait Time and see if it is too much
 					
-					queues[qnum - 2].push_back(queues[qnum - 1][j]); //promote to above queue
-					queues[qnum - 1].erase(queues[qnum - 1].begin() + j); //get rid of it from previous queue
+						if(debug)
+							cout << "Promoting process " + to_string(queues[qnum - 1][j].P_ID) + "." << endl;
+						
+						queues[qnum - 2].push_back(queues[qnum - 1][j]); //promote to above queue
+						queues[qnum - 1].erase(queues[qnum - 1].begin() + j); //get rid of it from previous queue
+					}
 				}
 			}
 		}
@@ -416,6 +419,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 					for(int w = 1; w < qnum; w++){ //make sure all queues are empty
 						if(queues[w].size() > 0){
 							done = false;
+							break;
 						}
 					}
 				}
@@ -423,7 +427,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 			} else {
 				//has not finished running :(
 		
-				if(t.IO > 0 && t.BurstCalc == t.Burst - 1){ //I/O at tick before the process ends if io is needed
+				if(t.IO > 0 && t.BurstCalc == currQuant){ //I/O at tick before the process ends if io is needed
 					//queue in the top to finish process
 					t.IO--;
 					queues[0].push_back(t);//add to end of first queue
