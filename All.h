@@ -372,6 +372,10 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 					runningP = true;
 					currQ = i;
 					
+					if(debug)
+						cout << "Starting PID " + std::to_string(ps[currPInd].P_ID) + " at time " + std::to_string(ps[currPInd].Arrival) + " in queue " + to_string(currQ) << endl;
+					
+					
 					break; //break out of for loop
 				}
 			} //exit for loop.
@@ -449,7 +453,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 		tTime++; //increment tTime
 	} //end tTime simulation
 
-    if(!debug)
+    if(debug == false)
         printProgress(((double)psLocation)/((double)pssize));
 	
 	cout << endl << "Done!!" << endl;
