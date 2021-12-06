@@ -373,7 +373,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 					currQ = i;
 					
 					if(debug)
-						cout << "Starting PID " + std::to_string(ps[currPInd].P_ID) + " at time " + std::to_string(ps[currPInd].Arrival) + " in queue " + to_string(currQ) << endl;
+						cout << "Starting PID " + std::to_string(t.P_ID) + " at time " + std::to_string(t.Arrival) + " in queue " + to_string(currQ) << endl;
 					
 					
 					break; //break out of for loop
@@ -431,7 +431,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 			} else {
 				//has not finished running :(
 		
-				if(t.IO > 0 && t.BurstCalc == currQuant){ //I/O at tick before the process ends if io is needed
+				if(t.IO > 0 && t.BurstCalc == t.Burst){ //I/O at tick before the process ends if io is needed
 					//queue in the top to finish process
 					t.IO--;
 					queues[0].push_back(t);//add to end of first queue
