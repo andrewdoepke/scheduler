@@ -418,7 +418,7 @@ void mfqs(SchedData* ps, int pssize, bool debug) {
 				
                 eventTracker.push_back(t); //on completion, save data for this run
 				
-				if(currPInd >= pssize-1 && queues[0].size() == 0){ //check for completion
+				if(currPInd > pssize-1 && queues[0].size() == 0){ //check for completion
 					done = true; //done is true if the following don't pass
 					for(int w = 1; w < qnum; w++){ //make sure all queues are empty
 						if(queues[w].size() > 0){
